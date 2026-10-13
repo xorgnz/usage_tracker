@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+
+# SvelteKit and build output
+.svelte-kit/
+build/
+dist/
+.vite/
+
+# TypeScript incremental build cache
+*.tsbuildinfo
+
+# Local environment files
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Test coverage
+coverage/
+
+# IDE and operating system files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editor swap and temporary files
+*.swp
+*.swo
+*~
+
+# AI stuff
+AGENTS.md
+ai-rules
