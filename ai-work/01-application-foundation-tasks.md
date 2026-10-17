@@ -52,12 +52,12 @@ Expected application files, with exact names finalized during implementation:
   - [x] 3.2 - Bind the single foreground server to localhost on the configured port, fail clearly when the port is occupied, and report the local URL.
   - [x] 3.3 - Ensure development and initial regular use follow the same startup path; introduce no background service, container, or separate backend process.
 
-- [ ] 4 - Build the preliminary navigation shell
-  - [ ] 4.1 - Add Usage Tracker branding and a left sidebar with Monitoring and Analysis links and a visible current-location indication.
-  - [ ] 4.2 - Make Monitoring the landing page, with placeholder framing for an active-session list and selected-session activity.
-  - [ ] 4.3 - Add the Analysis placeholder and clearly identify unimplemented behavior. Do not fabricate sessions, usage, or working selection controls.
-  - [ ] 4.4 - Surface source-folder unavailability through server-derived serializable page data, keeping filesystem/configuration code out of browser bundles and session files unread.
-  - [ ] 4.5 - Keep the desktop layout simple and use semantic navigation with keyboard-accessible links. Defer detailed visual design and navigation for later capabilities.
+- [x] 4 - Build the preliminary navigation shell
+  - [x] 4.1 - Add Usage Tracker branding and a left sidebar with Monitoring and Analysis links and a visible current-location indication.
+  - [x] 4.2 - Make Monitoring the landing page, with placeholder framing for an active-session list and selected-session activity.
+  - [x] 4.3 - Add the Analysis placeholder and clearly identify unimplemented behavior. Do not fabricate sessions, usage, or working selection controls.
+  - [x] 4.4 - Surface source-folder unavailability through server-derived serializable page data, keeping filesystem/configuration code out of browser bundles and session files unread.
+  - [x] 4.5 - Keep the desktop layout simple and use semantic navigation with keyboard-accessible links. Defer detailed visual design and navigation for later capabilities.
 
 - [ ] 5 - Document local operation
   - [ ] 5.1 - Document WSL and Node.js prerequisites, user-performed dependency installation, and the committed lockfile.
@@ -100,3 +100,10 @@ Test authoring requires separate authorization. Potential coverage includes conf
 - Standalone strict TypeScript checking of vite.config.ts and ApplicationConfig passed; git diff --check passed.
 - npm run check remains blocked before diagnostics by the missing installed Rolldown native binding. Dependencies and lockfile were not changed.
 - Runtime listening and port-conflict behavior were not exercised because no server was started. No tests were authored.
+## Task 4 Execution Notes
+
+- Added the shared sidebar, current-page indication, keyboard focus styles, and skip link.
+- Monitoring remains the landing page with active-session and selected-session activity placeholders; Analysis has a conversation-inspection placeholder.
+- The thin server layout loader returns only folder availability and its explanatory message; no session files are read and no configuration instance reaches the browser.
+- npm run check passed using native Windows Node with zero Svelte errors or warnings. Vite separately reported existing notices about the extensionless startup import and deprecated envFile option.
+- No server was started, no browser inspection was performed, and no tests were authored.
