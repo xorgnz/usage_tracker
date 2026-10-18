@@ -59,11 +59,11 @@ Expected application files, with exact names finalized during implementation:
   - [x] 4.4 - Surface source-folder unavailability through server-derived serializable page data, keeping filesystem/configuration code out of browser bundles and session files unread.
   - [x] 4.5 - Keep the desktop layout simple and use semantic navigation with keyboard-accessible links. Defer detailed visual design and navigation for later capabilities.
 
-- [ ] 5 - Document local operation
-  - [ ] 5.1 - Document WSL and Node.js prerequisites, user-performed dependency installation, and the committed lockfile.
-  - [ ] 5.2 - Explain .env setup, defaults, path handling, validation errors, missing-folder behavior, and the rule against ambient application-setting overrides.
-  - [ ] 5.3 - Document npm run dev, the local URL, terminal shutdown, and the static validation command. Explain that the same foreground mode supports initial regular use.
-  - [ ] 5.4 - Identify the placeholder boundaries so users do not expect session functionality in this feature.
+- [x] 5 - Document local operation
+  - [x] 5.1 - Document WSL and Node.js prerequisites, user-performed dependency installation, and the committed lockfile.
+  - [x] 5.2 - Explain .env setup, defaults, path handling, validation errors, missing-folder behavior, and the rule against ambient application-setting overrides.
+  - [x] 5.3 - Document npm run dev, the local URL, terminal shutdown, and the static validation command. Explain that the same foreground mode supports initial regular use.
+  - [x] 5.4 - Identify the placeholder boundaries so users do not expect session functionality in this feature.
 
 - [ ] 6 - Validate the foundation without authoring tests
   - [ ] 6.1 - Run the configured Svelte/TypeScript check after dependencies are available and resolve issues within this feature's scope.
@@ -107,3 +107,10 @@ Test authoring requires separate authorization. Potential coverage includes conf
 - The thin server layout loader returns only folder availability and its explanatory message; no session files are read and no configuration instance reaches the browser.
 - npm run check passed using native Windows Node with zero Svelte errors or warnings. Vite separately reported existing notices about the extensionless startup import and deprecated envFile option.
 - No server was started, no browser inspection was performed, and no tests were authored.
+
+## Task 5 Execution Notes
+
+- Updated README.md with runtime prerequisites, user-performed installation from the committed lockfile, configuration, path rules, validation failures, and unavailable-folder behavior.
+- Documented foreground startup, local URL, shutdown, static checking, and the current Monitoring and Analysis placeholder boundaries.
+- Distinguished current native Windows execution from the original WSL target and documented the existing explicit Windows source-path restriction without changing application behavior.
+- Reviewed documentation against the implementation; git diff --check passed. No application commands, servers, or tests were run for this documentation-only task.
