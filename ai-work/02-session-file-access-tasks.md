@@ -22,11 +22,11 @@
 
 ## Tasks
 
-- [ ] 1 - Establish local session-access models and file discovery
-  - [ ] 1.1 - Inspect the available session layout and documented file metadata to determine parent/subagent locations and project-path extraction. Keep inspection limited to what this feature needs; do not infer project paths by reversing encoded directory names.
-  - [ ] 1.2 - Define named session metadata, warning, and discovery-result concepts, distinguishing server-side objects from the serializable UI contract. Represent successful empty discovery separately from discovery failure.
-  - [ ] 1.3 - Implement server-only discovery under the existing configured Claude directory, collecting all parent and subagent session files with filenames, paths, timestamps, and sizes.
-  - [ ] 1.4 - Associate subagents with their parent session and isolate directory/file access failures so unaffected results remain available with warnings. Handle files disappearing during discovery.
+- [x] 1 - Establish local session-access models and file discovery
+  - [x] 1.1 - Inspect the available session layout and documented file metadata to determine parent/subagent locations and project-path extraction. Keep inspection limited to what this feature needs; do not infer project paths by reversing encoded directory names.
+  - [x] 1.2 - Define named session metadata, warning, and discovery-result concepts, distinguishing server-side objects from the serializable UI contract. Represent successful empty discovery separately from discovery failure.
+  - [x] 1.3 - Implement server-only discovery under the existing configured Claude directory, collecting all parent and subagent session files with filenames, paths, timestamps, and sizes.
+  - [x] 1.4 - Associate subagents with their parent session and isolate directory/file access failures so unaffected results remain available with warnings. Handle files disappearing during discovery.
 
 - [ ] 2 - Implement tolerant JSONL reading
   - [ ] 2.1 - Give complete-record reading a focused server-only owner, exposing records internally without interpreting conversation messages or sending raw records to the browser.
@@ -57,3 +57,10 @@
   - [ ] 6.4 - Add automated coverage for unreadable and disappearing files, partial discovery results with warnings, and distinct empty/discovery-failure outcomes.
   - [ ] 6.5 - Add UI coverage for grouped metadata, nested subagents, warnings, empty/failure states, and manual refresh reflecting added, changed, and removed sessions, including pending and failure recovery.
   - [ ] 6.6 - Run the authored tests and the existing npm run check command; resolve failures within this feature and record any checks that could not be completed. Dependency installation remains user-run, and persistent processes require explicit authorization.
+
+## Task 1 Implementation Notes
+
+- Inspected local WSL parent transcripts under `~/.claude/projects/<project>/<sessionId>.jsonl`; metadata-bearing records include `cwd` for the original project path. Extraction remains in task 3.
+- No local subagent transcripts were present. The official Claude Code documentation describes `<project>/<sessionId>/subagents/agent-<agentId>.jsonl`: https://code.claude.com/docs/en/sub-agents#resume-subagents.
+- `SessionFileDAO` discovers parent and nested subagent files without reading JSONL content. Missing or unreadable parents leave subagent metadata in `orphanSubagents` with warnings; other project results remain available.
+- Task 1 validation: `npm run check` passed with zero errors and zero warnings from svelte-check; Vite printed its existing configuration notices. Run used Windows Node.js 24.19.0, below the repository's declared 24.21.0 minimum. WSL runtime behavior has not yet been validated. No test files were authored.
