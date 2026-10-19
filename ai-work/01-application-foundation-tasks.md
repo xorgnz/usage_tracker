@@ -65,11 +65,11 @@ Expected application files, with exact names finalized during implementation:
   - [x] 5.3 - Document npm run dev, the local URL, terminal shutdown, and the static validation command. Explain that the same foreground mode supports initial regular use.
   - [x] 5.4 - Identify the placeholder boundaries so users do not expect session functionality in this feature.
 
-- [ ] 6 - Validate the foundation without authoring tests
-  - [ ] 6.1 - Run the configured Svelte/TypeScript check after dependencies are available and resolve issues within this feature's scope.
-  - [ ] 6.2 - Verify startup and navigation inside WSL, localhost binding, URL reporting, foreground shutdown, and truthful placeholder content. Follow the project's requirement for explicit authorization before starting a server; otherwise provide the user with the smoke-check steps and record their results.
-  - [ ] 6.3 - Verify defaults, file-provided settings, conflicting exported application settings, invalid port values, an occupied port, and an unavailable Claude Code directory through targeted checks. Preserve existing local settings and leave no processes running.
-  - [ ] 6.4 - Confirm no session files are read, server-only configuration remains outside browser bundles, and generated output and local .env remain excluded from Git. Record validation results and any checks that could not be completed.
+- [x] 6 - Validate the foundation without authoring tests
+  - [x] 6.1 - Run the configured Svelte/TypeScript check after dependencies are available and resolve issues within this feature's scope.
+  - [x] 6.2 - Verify startup and navigation inside WSL, localhost binding, URL reporting, foreground shutdown, and truthful placeholder content. Follow the project's requirement for explicit authorization before starting a server; otherwise provide the user with the smoke-check steps and record their results.
+  - [x] 6.3 - Verify defaults, file-provided settings, conflicting exported application settings, invalid port values, an occupied port, and an unavailable Claude Code directory through targeted checks. Preserve existing local settings and leave no processes running.
+  - [x] 6.4 - Confirm no session files are read, server-only configuration remains outside browser bundles, and generated output and local .env remain excluded from Git. Record validation results and any checks that could not be completed.
 
 ## Deferred Test Work
 
@@ -114,3 +114,20 @@ Test authoring requires separate authorization. Potential coverage includes conf
 - Documented foreground startup, local URL, shutdown, static checking, and the current Monitoring and Analysis placeholder boundaries.
 - Distinguished current native Windows execution from the original WSL target and documented the existing explicit Windows source-path restriction without changing application behavior.
 - Reviewed documentation against the implementation; git diff --check passed. No application commands, servers, or tests were run for this documentation-only task.
+
+## Task 6 Validation Results (2026-10-18)
+
+- Environment: native Windows Node and PowerShell, following the corrected execution instructions; WSL runtime behavior was not checked.
+- 6.1 passed: npm run check completed with zero Svelte errors or warnings. Vite still emits the existing extensionless-import and deprecated-envFile notices.
+- Configuration checks passed using ApplicationConfig directly in an isolated OS temporary directory: absent .env defaults, conflicting exported PORT and CLAUDE_DIRECTORY ignored, file-specified port, quoted relative source folder, accessible source folder, missing folder, and a source path pointing to a file.
+- Invalid configuration checks passed for empty, zero, negative, oversized, fractional, and nonnumeric ports, plus empty paths, ~username paths, and explicit drive-letter paths.
+- Temporary validation data was removed after checking the resolved cleanup path; project .env, installed dependencies, and lockfile were not modified. No tests were added to the repository.
+- Source inspection confirms that the only application readFile call reads .env; source folders are inspected through metadata/access only. Filesystem imports and configuration ownership remain in server-only modules, and the layout returns plain availability fields. The user confirmed that browser-source searches were clear on both Monitoring and Analysis; no production build was inspected.
+- Git ignore checks confirm .env, .svelte-kit output, and node_modules are ignored; git diff --check passed.
+- 6.2 passed: the user confirmed startup, browser navigation, keyboard access, current-page indication, loopback binding, local URL output, and Ctrl+C shutdown checks.
+- 6.3 passed: the user confirmed the occupied-port startup check; the other targeted configuration cases above passed.
+- 6.4 passed: source and ignore checks above passed, and the user confirmed clear DevTools source searches for ApplicationConfig and filesystem imports on both pages. The agent started no server; the user performed the runtime checks.
+
+### Completion
+
+Task 6 is complete based on agent checks and user-reported runtime and browser-source checks. The user reported a missing /favicon.ico (404), deferred as a non-blocking cosmetic issue. No automated tests were authored. Feature status remains unchanged.
