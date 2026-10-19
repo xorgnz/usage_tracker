@@ -71,9 +71,16 @@ Expected application files, with exact names finalized during implementation:
   - [x] 6.3 - Verify defaults, file-provided settings, conflicting exported application settings, invalid port values, an occupied port, and an unavailable Claude Code directory through targeted checks. Preserve existing local settings and leave no processes running.
   - [x] 6.4 - Confirm no session files are read, server-only configuration remains outside browser bundles, and generated output and local .env remain excluded from Git. Record validation results and any checks that could not be completed.
 
-## Deferred Test Work
-
-Test authoring requires separate authorization. Potential coverage includes configuration precedence and defaults, invalid settings and port conflicts, missing-folder behavior, and navigation placeholders.
+- [ ] 7 - Author and run foundation regression tests
+  - [ ] 7.1 - Establish a repeatable test command using the existing stack where practical. Use reusable builders and isolated temporary project directories for configuration cases; preserve the real .env, Claude directory, and ambient environment after each test. Test execution is separate from this planning update.
+  - [ ] 7.2 - Cover absent .env and omitted settings, default port 5173 and OS-account home resolution, file-specified values, quoted values, and conflicting exported PORT, CLAUDE_DIRECTORY, and HOME values. Confirm ambient values do not override file settings or documented defaults.
+  - [ ] 7.3 - Cover port boundaries 1 and 65535 and rejection of empty, zero, negative, oversized, fractional, and nonnumeric values. Assert actionable configuration errors and cover unreadable .env files.
+  - [ ] 7.4 - Cover relative source paths resolved against the supplied project root, ~ and ~/ expansion, and rejection of empty/whitespace-only paths, NUL characters, ~username paths, explicit drive-letter paths, and backslash-prefixed paths. Exercise the documented behavior without changing path policy.
+  - [ ] 7.5 - Cover accessible, missing, non-directory, and permission-denied source paths, distinguishing unavailable-folder status from invalid settings. Verify the configuration owner checks only directory metadata/access and never reads session files; simulate permission errors where elevated accounts make real permissions unreliable.
+  - [ ] 7.6 - Cover the layout loader's plain availability payload and shell behavior for available and unavailable folders on both routes. Ensure no configuration instance or server-only implementation is exposed to browser code.
+  - [ ] 7.7 - Add navigation coverage for the Monitoring landing route, Analysis route, branding, current-page indication, keyboard navigation, skip-link focus, and narrow-screen usability. Assert truthful placeholder behavior only where the corresponding feature is still unimplemented; avoid freezing Monitoring's feature 1 placeholder as later features replace it.
+  - [ ] 7.8 - Add controlled startup integration coverage for configured/default ports, ignored ambient port overrides, loopback binding, local URL reporting, invalid configuration before listening, occupied-port failure without fallback, and foreground shutdown. Use temporary settings and bounded child processes with guaranteed cleanup; obtain required authorization before launching application servers.
+  - [ ] 7.9 - Run the authored tests and npm run check in the supported environment. Record native Windows and WSL results separately, including checks not exercised. Dependency installation remains user-run; do not change dependencies or start persistent processes as part of this planning task.
 
 ## Task 1 Execution Notes
 
