@@ -28,10 +28,10 @@
   - [x] 1.3 - Implement server-only discovery under the existing configured Claude directory, collecting all parent and subagent session files with filenames, paths, timestamps, and sizes.
   - [x] 1.4 - Associate subagents with their parent session and isolate directory/file access failures so unaffected results remain available with warnings. Handle files disappearing during discovery.
 
-- [ ] 2 - Implement tolerant JSONL reading
-  - [ ] 2.1 - Give complete-record reading a focused server-only owner, exposing records internally without interpreting conversation messages or sending raw records to the browser.
-  - [ ] 2.2 - Read complete JSONL records while files change, deferring an incomplete trailing record until a later read. Skip malformed complete records with warnings and retain valid records.
-  - [ ] 2.3 - Handle unreadable or disappearing files without blocking other sessions. Include enough file and record context in warnings to identify the problem.
+- [x] 2 - Implement tolerant JSONL reading
+  - [x] 2.1 - Give complete-record reading a focused server-only owner, exposing records internally without interpreting conversation messages or sending raw records to the browser.
+  - [x] 2.2 - Read complete JSONL records while files change, deferring an incomplete trailing record until a later read. Skip malformed complete records with warnings and retain valid records.
+  - [x] 2.3 - Handle unreadable or disappearing files without blocking other sessions. Include enough file and record context in warnings to identify the problem.
 
 - [ ] 3 - Coordinate the session list and page loading
   - [ ] 3.1 - Coordinate discovery and the minimal record access needed to resolve original project paths and report record warnings. Use the storage directory name when the project path cannot be determined; keep conversation interpretation out of this code.
@@ -64,3 +64,11 @@
 - No local subagent transcripts were present. The official Claude Code documentation describes `<project>/<sessionId>/subagents/agent-<agentId>.jsonl`: https://code.claude.com/docs/en/sub-agents#resume-subagents.
 - `SessionFileDAO` discovers parent and nested subagent files without reading JSONL content. Missing or unreadable parents leave subagent metadata in `orphanSubagents` with warnings; other project results remain available.
 - Task 1 validation: `npm run check` passed with zero errors and zero warnings from svelte-check; Vite printed its existing configuration notices. Run used Windows Node.js 24.19.0, below the repository's declared 24.21.0 minimum. WSL runtime behavior has not yet been validated. No test files were authored.
+
+## Task 2 Implementation Notes
+
+- Added the server-only SessionJsonlReader and SessionReadResult contract. Records retain their source line number and an unknown JSON value, without conversation interpretation or browser exposure.
+- Each call reads the file afresh. Newline-terminated malformed records produce path/line warnings and do not discard valid records. CRLF is accepted by JSON parsing.
+- A valid final JSON value is accepted without a newline. An invalid unterminated tail is deferred without a warning until a later read; without a terminator, malformed and unfinished trailing data cannot reliably be distinguished.
+- File read failures, including files removed after discovery, return a failed result with a file warning rather than throwing into other session reads.
+- Validation: npm run check passed with zero Svelte/TypeScript errors or warnings; existing Vite configuration notices remain. Native Windows Node.js 24.19.0 was used, below the declared 24.21.0 minimum. git diff --check passed. Runtime edge-case coverage remains in the later validation/test tasks; no tests were authored and no server was started.

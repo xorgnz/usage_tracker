@@ -10,7 +10,8 @@ export enum SessionWarningCode
 {
     DirectoryAccess = 'directory-access',
     FileAccess = 'file-access',
-    MissingParent = 'missing-parent'
+    MissingParent = 'missing-parent',
+    MalformedRecord = 'malformed-record'
 }
 
 /** Safe diagnostic metadata; never contains conversation records. */
@@ -19,6 +20,7 @@ export interface SessionWarning
     code: SessionWarningCode;
     path: string;
     message: string;
+    lineNumber?: number;
 }
 
 /** Plain metadata contract for a file and its associated subagents. Dates are ISO strings. */
