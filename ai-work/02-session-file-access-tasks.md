@@ -33,10 +33,10 @@
   - [x] 2.2 - Read complete JSONL records while files change, deferring an incomplete trailing record until a later read. Skip malformed complete records with warnings and retain valid records.
   - [x] 2.3 - Handle unreadable or disappearing files without blocking other sessions. Include enough file and record context in warnings to identify the problem.
 
-- [ ] 3 - Coordinate the session list and page loading
-  - [ ] 3.1 - Coordinate discovery and the minimal record access needed to resolve original project paths and report record warnings. Use the storage directory name when the project path cannot be determined; keep conversation interpretation out of this code.
-  - [ ] 3.2 - Group parent sessions by project path, sort them by file modification time newest first, and retain subagents beneath their parent. Keep grouping and sorting out of the Svelte page.
-  - [ ] 3.3 - Add a thin monitoring page server loader that resolves configuration, calls session-list coordination, and returns plain serializable metadata, warnings, and empty/failure state. Re-evaluate file availability on each request.
+- [x] 3 - Coordinate the session list and page loading
+  - [x] 3.1 - Coordinate discovery and the minimal record access needed to resolve original project paths and report record warnings. Use the storage directory name when the project path cannot be determined; keep conversation interpretation out of this code.
+  - [x] 3.2 - Group parent sessions by project path, sort them by file modification time newest first, and retain subagents beneath their parent. Keep grouping and sorting out of the Svelte page.
+  - [x] 3.3 - Add a thin monitoring page server loader that resolves configuration, calls session-list coordination, and returns plain serializable metadata, warnings, and empty/failure state. Re-evaluate file availability on each request.
 
 - [ ] 4 - Integrate the grouped session list and manual refresh
   - [ ] 4.1 - Replace the session-discovery placeholder with project groups, parent sessions, nested subagents, and filenames, paths, timestamps, and file sizes. Preserve unrelated shell behavior and the deferred activity area.
@@ -72,3 +72,10 @@
 - A valid final JSON value is accepted without a newline. An invalid unterminated tail is deferred without a warning until a later read; without a terminator, malformed and unfinished trailing data cannot reliably be distinguished.
 - File read failures, including files removed after discovery, return a failed result with a file warning rather than throwing into other session reads.
 - Validation: npm run check passed with zero Svelte/TypeScript errors or warnings; existing Vite configuration notices remain. Native Windows Node.js 24.19.0 was used, below the declared 24.21.0 minimum. git diff --check passed. Runtime edge-case coverage remains in the later validation/test tasks; no tests were authored and no server was started.
+
+## Task 3 Implementation Notes
+
+- Added SessionListService to coordinate discovery and JSONL reading, extract the first non-empty top-level cwd, and fall back to the storage directory name without decoding it.
+- Parent sessions are grouped by project path and ordered by modification time newest first. Subagents remain nested beneath their parent; orphan metadata and file/record warnings remain available.
+- Added a plain SessionListViewModel and thin page server loader. Each request reloads ApplicationConfig and discovery; raw records remain server-only. Successful empty discovery is explicit and distinct from partial results or source failure.
+- git diff --check passed. npm run check awaits command selection under the project-local dvc-test rule. No tests were authored and no application server was started.
