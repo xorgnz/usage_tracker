@@ -38,16 +38,16 @@
   - [x] 3.2 - Group parent sessions by project path, sort them by file modification time newest first, and retain subagents beneath their parent. Keep grouping and sorting out of the Svelte page.
   - [x] 3.3 - Add a thin monitoring page server loader that resolves configuration, calls session-list coordination, and returns plain serializable metadata, warnings, and empty/failure state. Re-evaluate file availability on each request.
 
-- [ ] 4 - Integrate the grouped session list and manual refresh
-  - [ ] 4.1 - Replace the session-discovery placeholder with project groups, parent sessions, nested subagents, and filenames, paths, timestamps, and file sizes. Preserve unrelated shell behavior and the deferred activity area.
-  - [ ] 4.2 - Display warnings alongside usable results, and show distinct explanations for an empty session directory and discovery failure.
-  - [ ] 4.3 - Add a manual Refresh button that reruns server loading and updates discovery results and metadata, including additions, changes, and removals. Provide a visible pending state and restore the control after completion or failure.
-  - [ ] 4.4 - Keep the list and refresh control usable at existing responsive widths, with accessible headings and controls and local CSS matching repository conventions.
+- [x] 4 - Integrate the grouped session list and manual refresh
+  - [x] 4.1 - Replace the session-discovery placeholder with project groups, parent sessions, nested subagents, and filenames, paths, timestamps, and file sizes. Preserve unrelated shell behavior and the deferred activity area.
+  - [x] 4.2 - Display warnings alongside usable results, and show distinct explanations for an empty session directory and discovery failure.
+  - [x] 4.3 - Add a manual Refresh button that reruns server loading and updates discovery results and metadata, including additions, changes, and removals. Provide a visible pending state and restore the control after completion or failure.
+  - [x] 4.4 - Keep the list and refresh control usable at existing responsive widths, with accessible headings and controls and local CSS matching repository conventions.
 
 - [ ] 5 - Validate the implemented feature
   - [ ] 5.1 - Run the existing `npm run check` command using the project's supported runtime, without installing dependencies or starting a persistent process.
-  - [ ] 5.2 - Verify discovery, project-path fallback, newest-first ordering, parent/subagent association, and metadata against representative local files using focused checks or an already running application.
-  - [ ] 5.3 - Verify complete-record reading, incomplete-tail deferral, malformed-record warnings, unreadable/disappearing files, and distinct empty/failure states using disposable fixtures outside the real session directory. Do not alter Claude's session files.
+  - [x] 5.2 - Verify discovery, project-path fallback, newest-first ordering, parent/subagent association, and metadata against representative local files using focused checks or an already running application.
+  - [x] 5.3 - Verify complete-record reading, incomplete-tail deferral, malformed-record warnings, unreadable/disappearing files, and distinct empty/failure states using disposable fixtures outside the real session directory. Do not alter Claude's session files.
   - [ ] 5.4 - Verify initial loading and manual refresh for added, changed, and removed files. If a running application is needed, ask the user to run it rather than starting a dev server without explicit authorization. Record any validation that could not be completed.
 
 - [ ] 6 - Author and run feature tests
@@ -79,3 +79,20 @@
 - Parent sessions are grouped by project path and ordered by modification time newest first. Subagents remain nested beneath their parent; orphan metadata and file/record warnings remain available.
 - Added a plain SessionListViewModel and thin page server loader. Each request reloads ApplicationConfig and discovery; raw records remain server-only. Successful empty discovery is explicit and distinct from partial results or source failure.
 - git diff --check passed. npm run check awaits command selection under the project-local dvc-test rule. No tests were authored and no application server was started.
+
+## Task 4 Implementation Notes
+
+- Replaced the discovery placeholder with project groups, parent sessions, nested subagents, and retained orphan subagents. SessionFileMetadata renders filenames, paths, ISO creation/modification timestamps, and byte sizes.
+- Added warnings with file and line context alongside available results, plus separate messages for successful empty discovery, source failure, and incomplete discovery with no usable results.
+- Manual Refresh uses SvelteKit invalidateAll to reload page and layout data. It prevents overlapping refreshes, announces pending state, reports rejected refresh requests, and restores the button in finally.
+- Added wrapping for long paths, responsive metadata layout, semantic lists/headings, and a visible keyboard focus style. Preserved the shared shell and deferred activity area.
+- git diff --check passed. npm run check awaits selection under the project-local dvc-test rule; browser behavior and runtime refresh recovery were not verified. No tests were authored and no application server was started.
+
+## Task 5 Validation Results
+
+- Task 4 committed as d745155 before validation began.
+- 5.1: npm run check passed with zero Svelte/TypeScript errors and warnings. Existing Vite notices about extensionless configuration imports and deprecated envFile remain. The available native Windows Node is 24.19.0, below the declared >=24.21.0 <25 range; validation on a supported runtime remains outstanding, so 5.1 is not checked off.
+- 5.2: Focused checks against representative local disposable files passed for discovery, original cwd grouping, storage-directory fallback, newest-first order, parent/subagent association, file sizes, modification timestamps, and exclusion of raw records from serialized list data. Real Claude files were not modified or used for these checks.
+- 5.3: Disposable-file checks passed for CRLF, valid records around malformed lines, warning path/line context, incomplete-tail deferral and completion, actual deletion between discovery and reading, missing-parent retention, successful empty discovery, source failure, and partial usable results. EACCES reading and ENOENT during metadata discovery were injected to exercise failure isolation deterministically; operating-system permission enforcement was not tested. Temporary scripts and fixture directories were removed.
+- 5.4: Repeated service loads reflected added, changed, and removed files. No server was listening at the default port 5173. Browser initial loading, Refresh interaction, pending state, and failure recovery remain unverified; no application server was started. Task 5 remains open for supported-runtime validation and browser checks.
+- Source inspection found text-encoding corruption in the pending Refresh label and warning line separator in src/routes/+page.svelte. The stored UTF-8 strings contain mojibake rather than the intended ellipsis/em dash. Reported as a validation finding; application files were not changed under this validation task.
