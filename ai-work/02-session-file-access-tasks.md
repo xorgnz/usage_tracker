@@ -44,11 +44,11 @@
   - [x] 4.3 - Add a manual Refresh button that reruns server loading and updates discovery results and metadata, including additions, changes, and removals. Provide a visible pending state and restore the control after completion or failure.
   - [x] 4.4 - Keep the list and refresh control usable at existing responsive widths, with accessible headings and controls and local CSS matching repository conventions.
 
-- [ ] 5 - Validate the implemented feature
-  - [ ] 5.1 - Run the existing `npm run check` command using the project's supported runtime, without installing dependencies or starting a persistent process.
+- [x] 5 - Validate the implemented feature
+  - [x] 5.1 - Run the existing `npm run check` command using the project's supported runtime, without installing dependencies or starting a persistent process.
   - [x] 5.2 - Verify discovery, project-path fallback, newest-first ordering, parent/subagent association, and metadata against representative local files using focused checks or an already running application.
   - [x] 5.3 - Verify complete-record reading, incomplete-tail deferral, malformed-record warnings, unreadable/disappearing files, and distinct empty/failure states using disposable fixtures outside the real session directory. Do not alter Claude's session files.
-  - [ ] 5.4 - Verify initial loading and manual refresh for added, changed, and removed files. If a running application is needed, ask the user to run it rather than starting a dev server without explicit authorization. Record any validation that could not be completed.
+  - [x] 5.4 - Verify initial loading and manual refresh for added, changed, and removed files. If a running application is needed, ask the user to run it rather than starting a dev server without explicit authorization. Record any validation that could not be completed.
 
 - [ ] 6 - Author and run feature tests
   - [ ] 6.1 - Establish a repeatable test command using the existing stack where practical, and reusable fixtures/builders in a disposable directory outside the real Claude session directory. Never modify real session files.
@@ -96,3 +96,11 @@
 - 5.3: Disposable-file checks passed for CRLF, valid records around malformed lines, warning path/line context, incomplete-tail deferral and completion, actual deletion between discovery and reading, missing-parent retention, successful empty discovery, source failure, and partial usable results. EACCES reading and ENOENT during metadata discovery were injected to exercise failure isolation deterministically; operating-system permission enforcement was not tested. Temporary scripts and fixture directories were removed.
 - 5.4: Repeated service loads reflected added, changed, and removed files. No server was listening at the default port 5173. Browser initial loading, Refresh interaction, pending state, and failure recovery remain unverified; no application server was started. Task 5 remains open for supported-runtime validation and browser checks.
 - Source inspection found text-encoding corruption in the pending Refresh label and warning line separator in src/routes/+page.svelte. The stored UTF-8 strings contain mojibake rather than the intended ellipsis/em dash. Reported as a validation finding; application files were not changed under this validation task.
+
+### Task 5 Completion Update
+
+- The earlier outstanding items above are superseded by this update. Task 5 is complete based on successful validation and user-reported browser testing.
+- 5.1: npm run check passed with zero errors and zero warnings after the Node engine range was adjusted to include Node 22.22.1 and the Vite configuration notices were fixed. The user confirmed this closes 5.1.
+- 5.4: The user ran the application on Windows against the WSL Claude directory mapped at Y:/home/xorgnz/.claude and confirmed project grouping, session metadata, a nested subagent, refresh discovery of a newly created session/subagent, and deletion reflected after refresh. The user reported the remaining browser testing complete; individual changed-file and failure-recovery results were not separately detailed.
+- The garbled pending Refresh label and warning separator were corrected. npm run check passed afterward with zero errors and zero warnings. Runtime/configuration and text fixes were committed together as 24ad10d.
+- No automated tests were authored; task 6 remains separate and open.

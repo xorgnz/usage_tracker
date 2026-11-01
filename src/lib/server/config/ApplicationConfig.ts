@@ -97,7 +97,7 @@ export class ApplicationConfig
         return port;
     }
 
-    /** Resolves a valid Linux directory setting to an absolute path using the project root or current account home. */
+    /** Resolves a directory setting using the host platform, project root, or current account home. */
     private static resolveClaudeDirectory(value: string | undefined, projectRoot: string): string
     {
         // Use the operating-system account home, independent of an exported HOME override.
@@ -105,12 +105,7 @@ export class ApplicationConfig
 
         if (directory.trim().length === 0 || directory.includes('\0'))
         {
-            throw new Error('Invalid CLAUDE_DIRECTORY in .env. Use a non-empty Linux directory path, or omit it to use ~/.claude.');
-        }
-
-        if (/^[a-z]:/i.test(directory) || directory.startsWith('\\'))
-        {
-            throw new Error('Invalid CLAUDE_DIRECTORY in .env. Use a WSL path such as /mnt/c/Users/name/.claude instead of a Windows path.');
+            throw new Error('Invalid CLAUDE_DIRECTORY in .env. Use a non-empty directory path, or omit it to use ~/.claude.');
         }
 
         if (directory === '~' || directory.startsWith('~/'))

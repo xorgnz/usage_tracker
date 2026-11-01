@@ -50,7 +50,7 @@
             <h2 id="sessions-title">Sessions</h2>
             <button type="button" onclick={refresh} disabled={refreshing}>Refresh</button>
         </div>
-        <p class="refresh-status" role="status">{refreshing ? 'Refreshing sessionsâ€¦' : ''}</p>
+        <p class="refresh-status" role="status">{refreshing ? 'Refreshing sessions...' : ''}</p>
 
         {#if refreshIssue !== null}
             <p role="alert">{refreshIssue}</p>
@@ -74,7 +74,7 @@
                             <li>
                                 <strong>{warning.path}</strong>
                                 {#if warning.lineNumber !== undefined}
-                                    <span> â€” line {warning.lineNumber}</span>
+                                    <span> &mdash; line {warning.lineNumber}</span>
                                 {/if}
                                 <p>{warning.message}</p>
                             </li>
