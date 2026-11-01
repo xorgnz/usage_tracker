@@ -50,13 +50,13 @@
   - [x] 5.3 - Verify complete-record reading, incomplete-tail deferral, malformed-record warnings, unreadable/disappearing files, and distinct empty/failure states using disposable fixtures outside the real session directory. Do not alter Claude's session files.
   - [x] 5.4 - Verify initial loading and manual refresh for added, changed, and removed files. If a running application is needed, ask the user to run it rather than starting a dev server without explicit authorization. Record any validation that could not be completed.
 
-- [ ] 6 - Author and run feature tests
-  - [ ] 6.1 - Establish a repeatable test command using the existing stack where practical, and reusable fixtures/builders in a disposable directory outside the real Claude session directory. Never modify real session files.
-  - [ ] 6.2 - Add automated coverage for discovery, file metadata, original project-path grouping and fallback, newest-first ordering, and parent/subagent association.
-  - [ ] 6.3 - Add automated coverage for complete JSONL records, incomplete-tail deferral and successful reading after completion, malformed-record warnings, and preservation of valid records.
-  - [ ] 6.4 - Add automated coverage for unreadable and disappearing files, partial discovery results with warnings, and distinct empty/discovery-failure outcomes.
-  - [ ] 6.5 - Add UI coverage for grouped metadata, nested subagents, warnings, empty/failure states, and manual refresh reflecting added, changed, and removed sessions, including pending and failure recovery.
-  - [ ] 6.6 - Run the authored tests and the existing npm run check command; resolve failures within this feature and record any checks that could not be completed. Dependency installation remains user-run, and persistent processes require explicit authorization.
+- [x] 6 - Author and run feature tests
+  - [x] 6.1 - Establish a repeatable test command using the existing stack where practical, and reusable fixtures/builders in a disposable directory outside the real Claude session directory. Never modify real session files.
+  - [x] 6.2 - Add automated coverage for discovery, file metadata, original project-path grouping and fallback, newest-first ordering, and parent/subagent association.
+  - [x] 6.3 - Add automated coverage for complete JSONL records, incomplete-tail deferral and successful reading after completion, malformed-record warnings, and preservation of valid records.
+  - [x] 6.4 - Add automated coverage for unreadable and disappearing files, partial discovery results with warnings, and distinct empty/discovery-failure outcomes.
+  - [x] 6.5 - Add UI coverage for grouped metadata, nested subagents, warnings, empty/failure states, and manual refresh reflecting added, changed, and removed sessions, including pending and failure recovery.
+  - [x] 6.6 - Run the authored tests and the existing npm run check command; resolve failures within this feature and record any checks that could not be completed. Dependency installation remains user-run, and persistent processes require explicit authorization.
 
 ## Task 1 Implementation Notes
 
@@ -104,3 +104,14 @@
 - 5.4: The user ran the application on Windows against the WSL Claude directory mapped at Y:/home/xorgnz/.claude and confirmed project grouping, session metadata, a nested subagent, refresh discovery of a newly created session/subagent, and deletion reflected after refresh. The user reported the remaining browser testing complete; individual changed-file and failure-recovery results were not separately detailed.
 - The garbled pending Refresh label and warning separator were corrected. npm run check passed afterward with zero errors and zero warnings. Runtime/configuration and text fixes were committed together as 24ad10d.
 - No automated tests were authored; task 6 remains separate and open.
+
+## Task 6 Test Results
+
+- Added npm test using the built-in Node test runner and existing TypeScript/Svelte compilers. Tests are strictly type-checked with tests/tsconfig.json before execution; no dependencies were installed and no application server was started.
+- Added reusable SessionFixture ownership of isolated OS temporary directories, checked fixture paths, and automatic cleanup. Tests do not read .env or real Claude session files.
+- Filesystem coverage verifies metadata, original project paths and fallback, newest-first ordering, same IDs across projects, nested and orphan subagents, complete JSONL/CRLF records, incomplete-tail deferral and completion, malformed-record warning locations, actual deletion, empty/failure states, and repeated loads after additions, changes, and removals.
+- Deterministic filesystem mocks cover EACCES during reading and ENOENT during metadata discovery while preserving usable results; mocks are restored afterward. Operating-system ACL enforcement remains outside this suite.
+- UI coverage compiles the actual Svelte page and metadata component for server rendering. Tests verify grouping, nested subagents, metadata, warning paths/lines, empty/failure states, and fresh output after file changes. A test-only compiler injection captures the real refresh closure, with controlled invalidation to verify pending state, overlap prevention, success, failure, and retry recovery.
+- UI tests do not mount a browser DOM or verify SvelteKit network transport, focus, responsive layout, or live DOM updates. User-run interactive checks are recorded under task 5; the test technique and its limits are documented in tests/README.md.
+- Validation on native Windows Node 24.19.0: npm test passed all 12 tests with zero failures; npm run check passed with zero errors and zero warnings. This runtime is inside the revised package.json engine range. Other Node versions and WSL execution were not tested.
+- Task 6 is complete. No production application files were changed; package.json gained the test command. Earlier planning references to WSL-only/Node-24-only execution remain stale relative to the user's Windows direction; architecture records were not revised under this task.

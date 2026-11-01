@@ -10,7 +10,8 @@
     "scripts": {
         "dev": "vite dev",
         "prepare": "svelte-kit sync",
-        "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
+        "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+        "test": "tsc --project tests/tsconfig.json && node --import ./tests/register.mjs --test tests/*.test.ts"
     },
     "devDependencies": {
         "@sveltejs/kit": "3.1.0",
