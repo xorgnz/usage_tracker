@@ -27,11 +27,11 @@
 
 ## Tasks
 
-- [ ] 1 - Establish source mappings and conversation model boundaries
-  - [ ] 1.1 - Inspect representative available session records read-only to establish actual user/assistant, tool, thinking, system-event, timestamp, identifier, model, usage, and parent/subagent shapes. Record supported mappings and interpretation gaps without copying private conversation content into planning notes.
-  - [ ] 1.2 - Establish how genuine user messages differ from tool-result and other synthetic user-role records, and how explicit relationships identify tool activity and turn associations. Do not infer unsupported meanings from role alone.
-  - [ ] 1.3 - Define named server-side conversation, turn, substep, source-reference, diagnostic, and parsing-result concepts. Use concept-owning classes where behavior/invariants require them; preserve file/project identity so repeated IDs across projects do not collide.
-  - [ ] 1.4 - Define raw-record retention and source linkage so every valid JSON input, including primitive/array values and unknown fields, remains available without requiring a recognized record shape. Keep runtime models distinct from UI or transport contracts; do not add speculative serialization types.
+- [x] 1 - Establish source mappings and conversation model boundaries
+  - [x] 1.1 - Inspect representative available session records read-only to establish actual user/assistant, tool, thinking, system-event, timestamp, identifier, model, usage, and parent/subagent shapes. Record supported mappings and interpretation gaps without copying private conversation content into planning notes.
+  - [x] 1.2 - Establish how genuine user messages differ from tool-result and other synthetic user-role records, and how explicit relationships identify tool activity and turn associations. Do not infer unsupported meanings from role alone.
+  - [x] 1.3 - Define named server-side conversation, turn, substep, source-reference, diagnostic, and parsing-result concepts. Use concept-owning classes where behavior/invariants require them; preserve file/project identity so repeated IDs across projects do not collide.
+  - [x] 1.4 - Define raw-record retention and source linkage so every valid JSON input, including primitive/array values and unknown fields, remains available without requiring a recognized record shape. Keep runtime models distinct from UI or transport contracts; do not add speculative serialization types.
 
 - [ ] 2 - Implement source-preserving record interpretation
   - [ ] 2.1 - Establish the parser entry boundary accepting source-located records without filesystem or framework dependencies. Preserve source order separately from chronological order and retain raw input without mutating it.
@@ -66,3 +66,11 @@
   - [ ] 6.5 - Cover interrupted/incomplete turns, unmatched tools, unattached activity, ambiguous relationships, and incomplete-tail completion after a later read.
   - [ ] 6.6 - Cover service coordination for separate parent/subagent conversations, evidence-based tool links and session-level fallback, orphan retention, project identity collisions, empty/failed reads, warning propagation, and failure isolation.
   - [ ] 6.7 - Verify console reporting occurs only in development and excludes conversation content. Run the authored tests and existing npm run check/npm test commands; record results and execution limitations without starting a server or installing dependencies.
+
+## Task 1 Implementation Notes
+
+- Completed read-only local inspection of 38 files and 4,121 records, including one subagent transcript. Mapping evidence, synthetic-user distinctions, repeated response identifiers, and unobserved cases are documented in `03-conversation-parsing-source-mappings.md` without transcript content.
+- Added server-only conversation, message, turn, substep, relationship, diagnostic, and parse-result contracts. Identity includes project/session/agent/file context; content-block references retain their source line and index.
+- ConversationSource owns location validation and identity comparison. ConversationRecord retains a defensive snapshot of arbitrary parsed JSON and exposes copies. Other models are named structural contracts until parser behavior is implemented in subsequent tasks; no speculative transport or serialization layer was added.
+- Original usage remains a message-level value with presence distinguished from absence; substeps link to their source message. Raw records preserve all unknown fields and record types independently of interpretation.
+- git diff --check passed. User-selected validation on native Windows: npm run check passed with zero errors and zero warnings; npm test passed all 12 existing tests. These tests cover existing file-access/UI behavior, not dedicated conversation-model behavior; feature 3 test authoring remains task 6. WSL execution was not validated. No tests were authored, no server was started, and task 2 has not begun.
