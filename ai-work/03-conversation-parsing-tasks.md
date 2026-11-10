@@ -33,11 +33,11 @@
   - [x] 1.3 - Define named server-side conversation, turn, substep, source-reference, diagnostic, and parsing-result concepts. Use concept-owning classes where behavior/invariants require them; preserve file/project identity so repeated IDs across projects do not collide.
   - [x] 1.4 - Define raw-record retention and source linkage so every valid JSON input, including primitive/array values and unknown fields, remains available without requiring a recognized record shape. Keep runtime models distinct from UI or transport contracts; do not add speculative serialization types.
 
-- [ ] 2 - Implement source-preserving record interpretation
-  - [ ] 2.1 - Establish the parser entry boundary accepting source-located records without filesystem or framework dependencies. Preserve source order separately from chronological order and retain raw input without mutating it.
-  - [ ] 2.2 - Interpret supported user/assistant messages, ordered content blocks, thinking, tool calls/results, and system events using the mappings established in task 1. Retain identifiers and available metadata.
-  - [ ] 2.3 - Preserve recorded usage with its originating message and applicable turn/substep references without replicating a message's usage as independent charges on every content block or calculating totals/costs.
-  - [ ] 2.4 - Retain unknown records, unsupported content blocks, unknown fields, and partially interpretable records. Produce structured source-located diagnostics for interpretation gaps while returning usable recognized content.
+- [x] 2 - Implement source-preserving record interpretation
+  - [x] 2.1 - Establish the parser entry boundary accepting source-located records without filesystem or framework dependencies. Preserve source order separately from chronological order and retain raw input without mutating it.
+  - [x] 2.2 - Interpret supported user/assistant messages, ordered content blocks, thinking, tool calls/results, and system events using the mappings established in task 1. Retain identifiers and available metadata.
+  - [x] 2.3 - Preserve recorded usage with its originating message and applicable turn/substep references without replicating a message's usage as independent charges on every content block or calculating totals/costs.
+  - [x] 2.4 - Retain unknown records, unsupported content blocks, unknown fields, and partially interpretable records. Produce structured source-located diagnostics for interpretation gaps while returning usable recognized content.
 
 - [ ] 3 - Construct chronological turns and related activity
   - [ ] 3.1 - Order timestamped activity by timestamp, preserving file order for ties and content-block order within messages. Define and document a deterministic source-order placement policy for missing/invalid timestamps, mark chronology uncertainty, and ensure valid timestamped activity remains chronologically ordered.
@@ -74,3 +74,14 @@
 - ConversationSource owns location validation and identity comparison. ConversationRecord retains a defensive snapshot of arbitrary parsed JSON and exposes copies. Other models are named structural contracts until parser behavior is implemented in subsequent tasks; no speculative transport or serialization layer was added.
 - Original usage remains a message-level value with presence distinguished from absence; substeps link to their source message. Raw records preserve all unknown fields and record types independently of interpretation.
 - git diff --check passed. User-selected validation on native Windows: npm run check passed with zero errors and zero warnings; npm test passed all 12 existing tests. These tests cover existing file-access/UI behavior, not dedicated conversation-model behavior; feature 3 test authoring remains task 6. WSL execution was not validated. No tests were authored, no server was started, and task 2 has not begun.
+
+## Task 2 Implementation Notes
+
+- Task 1 committed as `229508d` before task 2 began.
+- Added ConversationParser accepting conversation identity and source-located ConversationRecord snapshots. It rejects cross-conversation input, preserves supplied record/file order, and performs no filesystem, framework, or console operations.
+- Added ConversationRecordInterpreter as the owner of per-record interpretation and safe source-located diagnostics. It recognizes user/assistant envelopes, string and block-array content, text/thinking/tool-call/tool-result blocks, and system events. Known system subtypes are turn_duration and local_command; other system subtypes retain event content with a diagnostic.
+- Every raw record remains available, including primitive/array/null values and unknown envelope types. Recognized blocks with invalid fields remain classified with diagnostics; unsupported blocks remain Unknown. Embedded API-request copies are not interpreted as fresh messages. Original extension fields remain in retained snapshots and full block content.
+- Message observations retain record/response/request identifiers, model, timestamp, API block index, stop reason, and the original usage value with an explicit presence flag. Substeps refer to message sources instead of copying usage; repeated response ids do not collapse records. Turn association remains task 3.
+- User-origin interpretation gives tool-result and synthetic metadata precedence; unsupported origins remain Unknown with a diagnostic. Classification does not construct turns or resolve relationships.
+- All activity is currently returned in source order as unattached, with unknown completion status. Chronological ordering, turn construction, relationship resolution, and completion inference remain task 3; parent/subagent coordination remains task 4.
+- Validation on native Windows: npm run check passed with zero errors/warnings; npm test passed all 12 existing file-access/UI regression tests. git diff --check passed. No dedicated parser tests were authored or run; they remain task 6. WSL execution was not validated.
