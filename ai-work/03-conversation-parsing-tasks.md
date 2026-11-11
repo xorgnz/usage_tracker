@@ -39,12 +39,12 @@
   - [x] 2.3 - Preserve recorded usage with its originating message and applicable turn/substep references without replicating a message's usage as independent charges on every content block or calculating totals/costs.
   - [x] 2.4 - Retain unknown records, unsupported content blocks, unknown fields, and partially interpretable records. Produce structured source-located diagnostics for interpretation gaps while returning usable recognized content.
 
-- [ ] 3 - Construct chronological turns and related activity
-  - [ ] 3.1 - Order timestamped activity by timestamp, preserving file order for ties and content-block order within messages. Define and document a deterministic source-order placement policy for missing/invalid timestamps, mark chronology uncertainty, and ensure valid timestamped activity remains chronologically ordered.
-  - [ ] 3.2 - Produce structured diagnostics when timestamp order differs from file order. Keep console reporting outside the parser and include source locations rather than transcript content.
-  - [ ] 3.3 - Build turns beginning with genuine user messages and containing subsequent assistant/tool/event substeps until the next genuine user message. Tool-result records must not start new user turns.
-  - [ ] 3.4 - Associate tool calls/results and other explicitly related activity using source identifiers while preserving chronological presentation. Handle ambiguous or conflicting relationships explicitly instead of inventing links or silently losing activity.
-  - [ ] 3.5 - Represent interrupted responses, incomplete turns, missing/unmatched tool calls/results, and unattached activity. Use evidence from records for completion status; retain uncertainty when completion cannot be established.
+- [x] 3 - Construct chronological turns and related activity
+  - [x] 3.1 - Order timestamped activity by timestamp, preserving file order for ties and content-block order within messages. Define and document a deterministic source-order placement policy for missing/invalid timestamps, mark chronology uncertainty, and ensure valid timestamped activity remains chronologically ordered.
+  - [x] 3.2 - Produce structured diagnostics when timestamp order differs from file order. Keep console reporting outside the parser and include source locations rather than transcript content.
+  - [x] 3.3 - Build turns beginning with genuine user messages and containing subsequent assistant/tool/event substeps until the next genuine user message. Tool-result records must not start new user turns.
+  - [x] 3.4 - Associate tool calls/results and other explicitly related activity using source identifiers while preserving chronological presentation. Handle ambiguous or conflicting relationships explicitly instead of inventing links or silently losing activity.
+  - [x] 3.5 - Represent interrupted responses, incomplete turns, missing/unmatched tool calls/results, and unattached activity. Use evidence from records for completion status; retain uncertainty when completion cannot be established.
 
 - [ ] 4 - Coordinate file access and linked conversations
   - [ ] 4.1 - Add a server-side conversation service that reuses existing discovery/reading and invokes the parser through the approved dependency direction. Keep interpretation out of the service and metadata-list loading unchanged.
@@ -85,3 +85,13 @@
 - User-origin interpretation gives tool-result and synthetic metadata precedence; unsupported origins remain Unknown with a diagnostic. Classification does not construct turns or resolve relationships.
 - All activity is currently returned in source order as unattached, with unknown completion status. Chronological ordering, turn construction, relationship resolution, and completion inference remain task 3; parent/subagent coordination remains task 4.
 - Validation on native Windows: npm run check passed with zero errors/warnings; npm test passed all 12 existing file-access/UI regression tests. git diff --check passed. No dedicated parser tests were authored or run; they remain task 6. WSL execution was not validated.
+
+## Task 3 Implementation Notes
+
+- Task 2 committed as `0d8b009` before task 3 began.
+- Added ConversationTimeline, ConversationRelationships, and ConversationTurnBuilder as cohesive owners within the approved parser boundary; ConversationParser coordinates these stages without filesystem/framework/console access.
+- Chronology policy: sort records by source line, retain undated/invalid-timestamp records in their original ordinal slots, and fill dated slots in ascending timestamp order with source-line tie-breaking. Blocks move with their whole record and retain array order. Raw records and message observations retain input order independently of turn presentation. Reordered dated records produce a source-located TimestampOrderMismatch diagnostic.
+- Turns begin only at interpreted initiating user messages, including messages with no content blocks. Earlier activity remains unattached. Tool-result and synthetic messages do not create turns. Each interpreted activity item remains present once in a turn or unattached activity.
+- Relationship resolution indexes all record UUIDs, assistant record UUIDs, and tool-call IDs before resolving forward references. Missing, duplicate, and self-referencing targets remain explicit and unresolved. Tool-result, source-assistant, source-tool, and parent-record evidence is retained independently. Cross-turn activity links and disagreeing tool/source-assistant links produce diagnostics while preserving chronological membership and both references.
+- Completion uses explicit assistant stop reasons conservatively: end_turn/stop_sequence complete a response; max_tokens/pause_turn indicate incompleteness; interrupted/cancelled indicate interruption; other or absent reasons remain unknown. A final tool_use response or unmatched tools leaves the turn incomplete. Starting another turn does not by itself establish completion. Tool calls with missing or multiple resolved results produce diagnostics; unmatched results remain represented.
+- Validation on native Windows: npm run check passed with zero errors/warnings and npm test passed all 12 existing regression tests. Dedicated parser chronology/relationship tests remain task 6; no tests were authored and WSL execution was not validated. Task 4 has not begun.

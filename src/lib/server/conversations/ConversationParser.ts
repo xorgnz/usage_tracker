@@ -1,3 +1,6 @@
+import { ConversationTimeline } from './ConversationTimeline';
+import { ConversationRelationships } from './ConversationRelationships';
+import { ConversationTurnBuilder } from './ConversationTurnBuilder';
 import type { ConversationParseResult } from './Conversation';
 import type { ConversationDiagnostic } from './ConversationDiagnostic';
 import type { ConversationMessage } from './ConversationMessage';
@@ -36,16 +39,19 @@ export class ConversationParser
             diagnostics.push(...interpretation.diagnostics);
         }
 
-        // Turn construction and relationship resolution are the subsequent parsing stage.
+        // Build chronology and explicit links without changing retained raw file order.
+        const ordered = new ConversationTimeline().order(retained, diagnostics);
+        const relationships = new ConversationRelationships().resolve(retained, activity, diagnostics);
+        const structure = new ConversationTurnBuilder().build(ordered, messages, activity, relationships, diagnostics);
         return {
             conversation: {
                 identity: Object.freeze({ ...identity }),
                 parent: null,
                 records: retained,
                 messages,
-                turns: [],
-                unattachedActivity: activity,
-                relationships: []
+                turns: structure.turns,
+                unattachedActivity: structure.unattached,
+                relationships
             },
             diagnostics
         };
