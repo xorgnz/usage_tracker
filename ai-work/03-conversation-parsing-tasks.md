@@ -53,19 +53,19 @@
   - [x] 4.4 - Report ordering discrepancies to the server console during development using parser diagnostics. Keep development-mode detection and console effects outside the parser; do not print raw messages or tool payloads.
   - [x] 4.5 - Ensure each service load reflects current files without persistent ingestion or stale conversation retention. Expose the server-side service for later features without adding endpoints, browser payloads, or conversation UI.
 
-- [ ] 5 - Validate the implemented feature using existing checks
-  - [ ] 5.1 - Run the existing npm run check and npm test commands through the applicable validation workflow. Record runtime/environment and any checks that could not be completed; do not install dependencies or start persistent processes.
-  - [ ] 5.2 - Use focused disposable-record/file checks to verify timestamp ordering, genuine-user turn boundaries, ordered content blocks, raw preservation, source linkage, recorded usage retention, and incomplete/unattached activity. Keep real Claude files read-only.
-  - [ ] 5.3 - Verify parent/subagent separation, evidence-based links, failure isolation, deferred-tail completion on a later read, and development-only console diagnostics without transcript content. Confirm existing list behavior is preserved and parsing results stay server-side.
+- [x] 5 - Validate the implemented feature using existing checks
+  - [x] 5.1 - Run the existing npm run check and npm test commands through the applicable validation workflow. Record runtime/environment and any checks that could not be completed; do not install dependencies or start persistent processes.
+  - [x] 5.2 - Use focused disposable-record/file checks to verify timestamp ordering, genuine-user turn boundaries, ordered content blocks, raw preservation, source linkage, recorded usage retention, and incomplete/unattached activity. Keep real Claude files read-only.
+  - [x] 5.3 - Verify parent/subagent separation, evidence-based links, failure isolation, deferred-tail completion on a later read, and development-only console diagnostics without transcript content. Confirm existing list behavior is preserved and parsing results stay server-side.
 
-- [ ] 6 - Author and run conversation parsing tests
-  - [ ] 6.1 - Add reusable synthetic record builders and conversation fixtures using the existing test runner and isolated temporary-file support. Keep parser unit tests independent of filesystem/framework state; never modify real Claude session files.
-  - [ ] 6.2 - Cover supported message/content/event interpretation, genuine-user boundaries, ordered substeps, explicit tool relationships, metadata, and recorded usage associations without accounting calculations.
-  - [ ] 6.3 - Cover reversed timestamp/file order, equal timestamps, missing/invalid timestamps, deterministic repeat parsing, and preserved content-block order. Verify ordering diagnostics identify source locations.
-  - [ ] 6.4 - Cover unknown record types/fields/blocks, valid non-object JSON values, partial interpretation, raw input preservation without mutation, and source traceability.
-  - [ ] 6.5 - Cover interrupted/incomplete turns, unmatched tools, unattached activity, ambiguous relationships, and incomplete-tail completion after a later read.
-  - [ ] 6.6 - Cover service coordination for separate parent/subagent conversations, evidence-based tool links and session-level fallback, orphan retention, project identity collisions, empty/failed reads, warning propagation, and failure isolation.
-  - [ ] 6.7 - Verify console reporting occurs only in development and excludes conversation content. Run the authored tests and existing npm run check/npm test commands; record results and execution limitations without starting a server or installing dependencies.
+- [x] 6 - Author and run conversation parsing tests
+  - [x] 6.1 - Add reusable synthetic record builders and conversation fixtures using the existing test runner and isolated temporary-file support. Keep parser unit tests independent of filesystem/framework state; never modify real Claude session files.
+  - [x] 6.2 - Cover supported message/content/event interpretation, genuine-user boundaries, ordered substeps, explicit tool relationships, metadata, and recorded usage associations without accounting calculations.
+  - [x] 6.3 - Cover reversed timestamp/file order, equal timestamps, missing/invalid timestamps, deterministic repeat parsing, and preserved content-block order. Verify ordering diagnostics identify source locations.
+  - [x] 6.4 - Cover unknown record types/fields/blocks, valid non-object JSON values, partial interpretation, raw input preservation without mutation, and source traceability.
+  - [x] 6.5 - Cover interrupted/incomplete turns, unmatched tools, unattached activity, ambiguous relationships, and incomplete-tail completion after a later read.
+  - [x] 6.6 - Cover service coordination for separate parent/subagent conversations, evidence-based tool links and session-level fallback, orphan retention, project identity collisions, empty/failed reads, warning propagation, and failure isolation.
+  - [x] 6.7 - Verify console reporting occurs only in development and excludes conversation content. Run the authored tests and existing npm run check/npm test commands; record results and execution limitations without starting a server or installing dependencies.
 
 ## Task 1 Implementation Notes
 
@@ -104,3 +104,22 @@
 - Parent read failure does not suppress child parsing; discovered parent identity remains linked even when its content is unavailable. Existing DAO/reader failure isolation preserves other usable results and file warnings.
 - Ordering diagnostics are reported outside the parser through Vite import.meta.env.DEV only, logging source paths/lines without transcript payloads. Direct Node execution defaults to silent when Vite development metadata is absent.
 - Validation on native Windows: npm run check passed with zero errors/warnings; npm test passed all 12 existing regression tests; git diff --check passed. Dedicated service/linking/development-console behavioral coverage remains tasks 5 and 6; no tests were authored, no server was started, and WSL execution was not validated.
+
+## Task 5 Validation Results
+
+- Task 4 committed as `e1f091b` before validation began. No production files or existing tests were changed during task 5.
+- 5.1: npm run check passed with zero errors and zero warnings; npm test passed all 12 existing regression tests. Runtime: native Windows Node.js 24.19.0. WSL execution remains unverified.
+- 5.2: Focused in-memory checks passed for reversed timestamp/file order, preserved block indices/order, source references, raw JSON objects/arrays/primitives/null, defensive snapshot copying, repeated-parse determinism, unknown records/blocks, recorded usage retention, unattached activity, and pending-tool turn incompleteness.
+- 5.3: Disposable-file checks passed for separate parent/subagent parsing, an explicit agentId plus resolved tool-result invocation link, session-level fallback after evidence removal, fresh repeated loads, incomplete-tail deferral/completion, empty readable files, malformed-line warnings with usable records, and orphan retention after parent deletion. A temporary discovery-method interception deleted an actual file between discovery and reading; the failed read stayed local while other conversations remained usable. The interception was restored afterward.
+- Development-console checks passed with the actual ConversationService source transpiled in memory and its development flag substituted true/false: warnings appeared only for the true case, with no private-content sentinel. Direct Node execution remained silent. This verifies reporting logic under substituted flags, not a running Vite server's flag injection or browser behavior.
+- Existing SessionListService results excluded transcript content in the focused check; the existing UI/list regression suite also passed. New conversation code remains under src/lib/server and no route/browser integration was added.
+- Synthetic data was held in memory or an isolated OS temporary directory, which was removed in finally. Real Claude session files were not used or modified. No persistent server, dependencies, or permanent test files were introduced. Repeatable feature test authoring remains task 6.
+
+## Task 6 Test Results
+
+- Added 15 in-memory parser tests and 8 disposable-file/service tests. npm test now runs 35 tests in total, including the 12 existing regression tests; all passed with zero failures.
+- ConversationFixture owns reusable synthetic record builders and source-located parsing. Parser coverage includes supported blocks/system events, user/tool/synthetic origins, metadata/usage association, repeated response observations, source identity, arbitrary raw JSON and defensive snapshots, malformed/unknown content, chronology/ties/missing dates, forward/duplicate/self/missing/conflicting relationships, unattached activity, and interrupted/incomplete turns.
+- Service coverage verifies independent parent/subagent usage, project-safe invocation links and session fallback, orphan retention, empty and failed discovery/reads, warning separation, malformed records, incomplete-tail completion, fresh updates/additions/removals, actual deletion after discovery, and injected read denial with restored mocks. Tests reuse SessionFixture cleanup and never access .env or real Claude files.
+- ConversationServiceHarness substitutes the development constant in actual service source and transpiles it in memory. Tests verify development-only console effects, location-only warning payloads, no transcript/model payloads, and direct-Node silence. This is not a test of Vite's flag injection or a running application server.
+- Added vite/client to test TypeScript declarations so imported service code is strictly checked with its existing Vite metadata. Updated tests/README.md with coverage and limitations. Production application code and existing test files were unchanged.
+- Validation on native Windows Node.js 24.19.0: npm test passed all 35 tests; npm run check passed with zero errors and zero warnings; git diff --check passed. No dependencies were installed and no server was started. WSL execution and browser behavior remain unverified by these tests.
