@@ -29,11 +29,11 @@
   - [x] 1.3 - Establish separate accounting, rate-catalog, calculation, and service owners within the server-only usage module. Define their explicit domain contracts before adding behavior; keep parsing, UI projection, and file loading outside domain calculations.
   - [x] 1.4 - Define known-total/unknown-allocation relationships: a response with 900 tokens remains a known contribution while linked substep allocations remain unknown. Unknown allocations must not become additional usage contributions.
 
-- [ ] 2 - Implement composable calculation objects
-  - [ ] 2.1 - Model known operands, identified unknowns, units, supported arithmetic operations, dependencies, and provenance as durable domain concepts. Scope arithmetic to usage/cost needs without introducing a general symbolic algebra engine.
-  - [ ] 2.2 - Implement evaluation that retains known subtotals and unresolved terms. Preserve independent known amounts when another operand is missing; retain the reason and source of each unresolved dependency.
-  - [ ] 2.3 - Implement a precise numeric representation for rate multiplication and aggregation using the existing stack. Document its supported precision/range and prevent silent loss or intermediate display rounding; keep presentation formatting outside this owner.
-  - [ ] 2.4 - Preserve references to shared totals and unknown allocations across composition. Maintain identity for repeated unknown references without conflating unrelated missing values or requiring an algebra solver.
+- [x] 2 - Implement composable calculation objects
+  - [x] 2.1 - Model known operands, identified unknowns, units, supported arithmetic operations, dependencies, and provenance as durable domain concepts. Scope arithmetic to usage/cost needs without introducing a general symbolic algebra engine.
+  - [x] 2.2 - Implement evaluation that retains known subtotals and unresolved terms. Preserve independent known amounts when another operand is missing; retain the reason and source of each unresolved dependency.
+  - [x] 2.3 - Implement a precise numeric representation for rate multiplication and aggregation using the existing stack. Document its supported precision/range and prevent silent loss or intermediate display rounding; keep presentation formatting outside this owner.
+  - [x] 2.4 - Preserve references to shared totals and unknown allocations across composition. Maintain identity for repeated unknown references without conflating unrelated missing values or requiring an algebra solver.
 
 - [ ] 3 - Implement token attribution and aggregation
   - [ ] 3.1 - Convert preserved usage into contributions carrying source, model, timestamp, category, and attribution level. Keep original values traceable and retain usable fields when others are absent or invalid.
@@ -78,3 +78,12 @@
 - Contribution identity preserves source/project/session/agent/file context and repeated observation references, response/request ids, model, timestamp, category/detail, original value and field path. Decimal-text amount contracts leave exact arithmetic implementation to task 2; no floating-point cost calculation or display formatting was added.
 - Updated stale task context to reflect active feature 4 and implemented feature 3. Preserved the already-uncommitted feature-status transition; no commit was created.
 - Validation on native Windows Node.js 24.19.0: npm run check passed with zero errors/warnings; npm test passed all 35 existing tests; git diff --check passed. These are regression/type checks, not dedicated usage-contract tests. No tests were authored, no dependencies installed, no server started, and WSL execution was not validated. Task 2 has not begun.
+
+## Task 2 Implementation Notes
+
+- Task 1 committed as 47e6a8e before this task began; the earlier feature-status transition remains uncommitted and unchanged.
+- Implemented immutable UsageCalculation objects for known/unknown operands, sums, products, and references. Supported units and product compatibility are explicit; source and rate references remain attached. Shared-total evidence is retained separately from arithmetic operands so unknown allocations do not acquire the measured response amount.
+- Added UsageCalculationEngine with exact known-subtotal plus unresolved-expression evaluation, dependency-specific unknowns, partial-product decomposition, and rejection of unknown-ID collisions with differing evidence. No pricing lookup, usage extraction/deduplication, UI formatting, or algebra solver was added.
+- Added BigInt-backed ExactDecimal addition, multiplication, and exact terminating division by positive integers. Unsupported range/scale or nonterminating division fails explicitly rather than rounding. Supported limits and allocation/dependency semantics are documented in 04-usage-cost-estimation-calculation-model.md.
+- Focused in-memory runtime examples produced exact 0.1 + 0.2 = 0.3, 3 / 1,000,000 = 0.000003, 1,200 tokens at that rate = 0.0036, and 9007199254740993 + 1 = 9007199254740994. Partial examples retained a known USD subtotal of 0.42 plus one unresolved rate term, and (2 + x) x 3 retained known 6 plus an unresolved term. Allocation examples retained their shared 900-token total without assigning it to the substep. Invalid unit sums, nonterminating division, and excessive scale were rejected. No test files were authored.
+- Validation on native Windows Node.js 24.19.0: npm run check passed with zero errors/warnings; npm test passed all 35 existing regression tests. Dedicated usage arithmetic/uncertainty coverage remains task 7. WSL execution was not validated; no dependencies were installed or server started. Task 3 has not begun.
