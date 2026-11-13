@@ -32,6 +32,19 @@ export interface UsageAttribution
     readonly source: ConversationSource | null;
 }
 
+/** Source evidence remains available even when observations cannot be reconciled. */
+export interface UsageRecordedValue
+{
+    readonly source: ConversationSource;
+    readonly present: boolean;
+    readonly value: unknown;
+    readonly usage: unknown;
+    readonly hasUsage: boolean;
+    readonly model: string | null;
+    readonly timestamp: string | null;
+    readonly requestId: string | null;
+}
+
 /** A category measurement with every source observation retained for later reconciliation. */
 export interface UsageContribution
 {
@@ -46,6 +59,7 @@ export interface UsageContribution
     readonly attribution: UsageAttribution;
     readonly quantity: TokenQuantity;
     readonly originalValue: unknown;
+    readonly recordedValues: readonly UsageRecordedValue[];
     readonly fieldPath: readonly string[];
 }
 
@@ -54,6 +68,7 @@ export interface UsageBreakdown
 {
     readonly total: UsageContribution;
     readonly components: readonly UsageContribution[];
+    readonly exhaustive: boolean;
 }
 
 /** Unknown allocation is a reference to measured usage, never an independent contribution. */
