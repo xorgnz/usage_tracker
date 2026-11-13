@@ -3,8 +3,8 @@
 ## Implementation Context
 
 - Source: `04-usage-cost-estimation-prd.md`. Preserve the approved accounting/pricing and composable-calculation decisions in `00-architecture.md`.
-- Feature 4 remains planned. This task list does not activate it or authorize implementation.
-- Feature 3's conversation models and service are planned but not yet implemented in the inspected repository. Integrate with their actual contracts once available; do not build a second parser or invent a parallel conversation model.
+- Feature 4 is active in 00-feature-status.md. Execute only explicitly requested tasks.
+- Feature 3's conversation models and service are implemented. Integrate with their actual contracts; do not build a second parser or invent a parallel conversation model.
 - Use existing Node.js (`TC1`), strict TypeScript (`TC2`), SvelteKit (`TC3`), and npm (`TC4`). Preserve foreground execution inside WSL; no additional dependency is currently required.
 - Place accounting, calculation objects, rate catalog, and estimation coordination in a cohesive server-only usage module with distinct concept owners. The service supplies inputs and coordinates; domain owners implement rules without filesystem or framework request-state access.
 - Known operands remain usable despite missing dependencies. Preserve expressions, units, source references, named unknowns, and relationships rather than returning only a numeric subtotal or incomplete flag.
@@ -13,7 +13,7 @@
 ## Relevant Files and Placement
 
 - `ai-work/03-conversation-parsing-prd.md` and `ai-work/03-conversation-parsing-tasks.md` - Upstream conversation and usage-preservation contracts.
-- `src/lib/server/conversations/` - Planned feature 3 models and service; confirm actual files before implementation.
+- `src/lib/server/conversations/` - Implemented feature 3 models and service supplying preserved usage and source references.
 - `src/lib/server/usage/` - Proposed local home for usage accounting, domain calculation objects, dated rate catalog, and estimation service within the approved boundaries.
 - A local rate-table data file alongside the usage module - Establish its concrete name and format during task 4; preserve effective periods and source evidence.
 - `src/lib/server/sessions/SessionListService.ts` - Existing metadata listing; do not add accounting to this owner.
@@ -23,11 +23,11 @@
 
 ## Tasks
 
-- [ ] 1 - Establish usage contracts and domain owners
-  - [ ] 1.1 - Review implemented feature 3 contracts and representative preserved usage shapes. Identify response/substep usage, model and timestamp sources, cache categories/subcategories, and repeated or cumulative observations. Record supported semantics and gaps without guessing or copying private transcript content.
-  - [ ] 1.2 - Establish named usage contribution, attribution, category, source identity, and result concepts. Preserve project/session/subagent identity and distinguish explicit zero, missing, and demonstrably not-applicable values.
-  - [ ] 1.3 - Establish separate accounting, rate-catalog, calculation, and service owners within the server-only usage module. Define their explicit domain contracts before adding behavior; keep parsing, UI projection, and file loading outside domain calculations.
-  - [ ] 1.4 - Define known-total/unknown-allocation relationships: a response with 900 tokens remains a known contribution while linked substep allocations remain unknown. Unknown allocations must not become additional usage contributions.
+- [x] 1 - Establish usage contracts and domain owners
+  - [x] 1.1 - Review implemented feature 3 contracts and representative preserved usage shapes. Identify response/substep usage, model and timestamp sources, cache categories/subcategories, and repeated or cumulative observations. Record supported semantics and gaps without guessing or copying private transcript content.
+  - [x] 1.2 - Establish named usage contribution, attribution, category, source identity, and result concepts. Preserve project/session/subagent identity and distinguish explicit zero, missing, and demonstrably not-applicable values.
+  - [x] 1.3 - Establish separate accounting, rate-catalog, calculation, and service owners within the server-only usage module. Define their explicit domain contracts before adding behavior; keep parsing, UI projection, and file loading outside domain calculations.
+  - [x] 1.4 - Define known-total/unknown-allocation relationships: a response with 900 tokens remains a known contribution while linked substep allocations remain unknown. Unknown allocations must not become additional usage contributions.
 
 - [ ] 2 - Implement composable calculation objects
   - [ ] 2.1 - Model known operands, identified unknowns, units, supported arithmetic operations, dependencies, and provenance as durable domain concepts. Scope arithmetic to usage/cost needs without introducing a general symbolic algebra engine.
@@ -69,3 +69,12 @@
   - [ ] 7.5 - Cover historical rate selection, exact interval boundaries, timestamp normalization, gaps, overlaps, invalid entries, missing model/time/rate, and preservation of selected-rate evidence.
   - [ ] 7.6 - Cover composable partial expressions, dependency-specific uncertainty, known tokens with unknown prices, distinct unknown identities, units, precision, and traceability through aggregation.
   - [ ] 7.7 - Cover service integration with feature 3 models and upstream incomplete-data outcomes. Run authored tests and existing npm run check/npm test; record results and any environment limitations.
+
+## Task 1 Implementation Notes
+
+- Reviewed actual ConversationMessage, ConversationSource, Conversation, and ConversationLoadResult contracts. Recorded read-only usage inspection in 04-usage-cost-estimation-source-mappings.md: 886 assistant usage observations, 373 identical repeated response-id observations, no observed per-content-block usage, and matching cache-write total/breakdown sums in this sample. Differing/cumulative observation semantics remain unproven; later accounting must preserve conflicts rather than invent a rule.
+- Added a server-only usage module with named category, attribution, contribution, breakdown, diagnostic, accounting/result, rate-selection, calculation/evaluation, and estimation contracts. Accounting consumes actual Conversation objects; estimation accepts ConversationLoadResult so upstream limitations stay available. Contracts define ownership without stub implementations or premature arithmetic/rate-loading/aggregation behavior.
+- TokenQuantity owns known-count validation and the distinction between known zero, unknown with a reason, and not-applicable with supporting evidence. SharedUsageAllocation links an unmeasured substep to its measured contribution while validating conversation identity; it is not an independent contribution. UsageBreakdown preserves total/component relationships without declaring them additive.
+- Contribution identity preserves source/project/session/agent/file context and repeated observation references, response/request ids, model, timestamp, category/detail, original value and field path. Decimal-text amount contracts leave exact arithmetic implementation to task 2; no floating-point cost calculation or display formatting was added.
+- Updated stale task context to reflect active feature 4 and implemented feature 3. Preserved the already-uncommitted feature-status transition; no commit was created.
+- Validation on native Windows Node.js 24.19.0: npm run check passed with zero errors/warnings; npm test passed all 35 existing tests; git diff --check passed. These are regression/type checks, not dedicated usage-contract tests. No tests were authored, no dependencies installed, no server started, and WSL execution was not validated. Task 2 has not begun.
