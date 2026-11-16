@@ -4,8 +4,8 @@
 |---|---|---|---|---|
 | 01-application-foundation | 🟢 completed | 2026-10-14 | 2026-10-18 | TypeScript/SvelteKit foundation, WSL configuration, and UI shell. |
 | 02-session-file-access | 🟢 completed | 2026-10-14 | 2026-11-06 | Session discovery and reading JSONL files while they change. |
-| 03-conversation-parsing | 🟠 active | 2026-10-14 | | Interpret messages, steps, tool activity, and metadata. |
-| 04-usage-cost-estimation | 🟡 planned | 2026-10-14 | | Token accounting and estimated costs per step and session. |
+| 03-conversation-parsing | 🟢 completed | 2026-10-14 | 2026-11-11 | Interpret messages, steps, tool activity, and metadata. |
+| 04-usage-cost-estimation | 🟠 active | 2026-10-14 | | Token accounting and estimated costs per step and session. |
 | 05-live-session-monitoring | 🟡 planned | 2026-10-14 | | Automatically refreshing session activity and usage view. |
 | 06-conversation-inspection | 🟡 planned | 2026-10-14 | | Detailed conversation browsing with metadata, usage, and costs. |
 | 07-session-search | 🟡 planned | 2026-10-14 | | Search and filter sessions by project, date, activity, model, and content. |
