@@ -33,3 +33,27 @@
 - Decision: Domain-owned calculation objects represent known operands, identified unknowns, operations, units, dependencies, and provenance. They own evaluation of supported arithmetic and propagation of unresolved dependencies. Accounting and estimation compose these objects; later UI projects their results into explanatory displays.
 - Context: Missing operands must not discard usable data or reduce an entire result to an undifferentiated incomplete flag.
 - Consequences: Known subtotals and unresolved terms coexist. Unknown rates affect dependent costs while known token counts remain usable. Unknown substep allocations reference their known response total without adding extra usage. Calculation results preserve source and applied-rate references and retain precision through aggregation. Presentation formatting and display rounding remain outside calculation ownership. The calculation model is limited to usage and cost requirements; no general-purpose symbolic algebra system is required.
+
+### Incremental monitoring state
+
+- Status: Approved
+- Source: `05-live-session-monitoring`
+- Decision: A server-side monitoring coordinator owns shared, process-local session state, keyed by configured source and full session/file identity. Browser requests trigger discovery and updates; concurrent updates are coalesced. The file-access boundary owns incremental reading and retained source records. The coordinator supplies snapshots to the existing parser, subagent linker, and estimation service.
+- Context: All sessions need current aggregates while detailed browser delivery remains on demand.
+- Consequences: Unchanged sessions reuse computed results. Changed sessions and affected parent/subagent aggregates are recalculated from retained records; repeated response observations are reconciled by accounting rather than blindly added. Parsing and calculation remain independent of filesystem access and browser state. Restarting the application rebuilds the in-memory store.
+
+### Monitoring delivery and refresh
+
+- Status: Approved
+- Source: `05-live-session-monitoring`
+- Decision: Thin SvelteKit transport boundaries obtain monitoring snapshots from the coordinator and return explicit serializable view models. Responses contain metadata and aggregate summaries for all sessions, with expanded activity details only for requested sessions. The browser owns visibility-aware refresh scheduling, expansion state, and recent-update presentation.
+- Context: Server-side reading and aggregation must be independent of how much detail the browser displays.
+- Consequences: Refreshes obtain one coherent snapshot for summaries and requested details. Domain objects and raw transcripts remain server-side. Responses preserve calculation uncertainty, source-update times, successful-refresh times, and failures. Failed refreshes retain prior displayed values with visible stale/failure indicators.
+
+### Incremental reading and recovery
+
+- Status: Approved
+- Source: `05-live-session-monitoring`
+- Decision: The file-access boundary owns byte offsets, file identity/metadata, incomplete trailing bytes, and append-consistency checks. Detected truncation, replacement, rewriting, or inconsistent reads invalidate the affected file state and trigger a full rebuild. Size growth alone is insufficient evidence of a valid append.
+- Context: JSONL normally grows by appending, but files can change while being read or be replaced.
+- Consequences: Only completed records enter interpreted snapshots. Updates publish consistently after processing succeeds; read failures preserve the last successful snapshot with explicit stale status. Rebuilds replace previous contributions rather than adding a second copy. Recovery remains local to affected sessions and aggregates.

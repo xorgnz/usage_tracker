@@ -1,0 +1,160 @@
+<mxfile host="drawio-plugin" modified="2026-11-17T01:16:54.705Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36" version="22.1.22" etag="ClDBbs40ahfnZGyGg5Lw" type="embed">
+  <diagram id="monitoring-components" name="Feature 05 Components">
+    <mxGraphModel dx="3793" dy="1537" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2100" pageHeight="1500" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="&lt;b&gt;05 — Live Session Monitoring&lt;/b&gt;&lt;br&gt;Component diagram • planned feature and existing neighbors&lt;br&gt;Request-driven updates inside the existing application; component names are proposed roles." style="text;html=1;align=left;verticalAlign=middle;fontSize=20;" parent="1" vertex="1">
+          <mxGeometry x="20" y="10" width="2040" height="75" as="geometry" />
+        </mxCell>
+        <mxCell id="browser" value="&lt;b&gt;Browser&lt;/b&gt;" style="rounded=1;html=1;verticalAlign=top;align=left;spacing=12;fontSize=17;fillColor=#f5f5f5;strokeColor=#999999;" parent="1" vertex="1">
+          <mxGeometry x="20" y="110" width="350" height="1180" as="geometry" />
+        </mxCell>
+        <mxCell id="server" value="&lt;b&gt;Existing application server — process-local state&lt;/b&gt;" style="rounded=1;html=1;verticalAlign=top;align=left;spacing=12;fontSize=17;fillColor=#fafafa;strokeColor=#999999;" parent="1" vertex="1">
+          <mxGeometry x="410" y="110" width="1650" height="1180" as="geometry" />
+        </mxCell>
+        <mxCell id="page" value="&lt;b&gt;Monitoring page + focused components&lt;/b&gt;&lt;br&gt;[extend] src/routes/+page.svelte&lt;br&gt;All-session summaries; expansion state;&lt;br&gt;distinct subagents and own/combined totals;&lt;br&gt;unknown operands; stale/failure flags" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;spacing=12;align=center;verticalAlign=middle;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;" parent="1" vertex="1">
+          <mxGeometry x="45" y="170" width="300" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="refresh" value="&lt;b&gt;Browser refresh owner&lt;/b&gt;&lt;br&gt;[new] src/lib/monitoring/&lt;br&gt;~5 s while visible; manual refresh;&lt;br&gt;no overlaps; lifecycle cleanup;&lt;br&gt;only expanded detail IDs requested" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;spacing=12;align=center;verticalAlign=middle;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=2;" parent="1" vertex="1">
+          <mxGeometry x="45" y="410" width="300" height="145" as="geometry" />
+        </mxCell>
+        <mxCell id="presentation" value="&lt;b&gt;Monitoring presentation&lt;/b&gt;&lt;br&gt;[new] src/lib/monitoring/&lt;br&gt;Summary/detail view models;&lt;br&gt;yellow for 5 s, fade by 60 s;&lt;br&gt;retain prior values after failure" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;spacing=12;align=center;verticalAlign=middle;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=2;" parent="1" vertex="1">
+          <mxGeometry x="45" y="660" width="300" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="transport" value="&lt;b&gt;SvelteKit transport&lt;/b&gt;&lt;br&gt;[extend/new] +page.server.ts + refresh route&lt;br&gt;Parse requested identities; resolve source;&lt;br&gt;thin request/response handling" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;spacing=12;align=center;verticalAlign=middle;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;" parent="1" vertex="1">
+          <mxGeometry x="450" y="170" width="300" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="coordinator" value="&lt;b&gt;Monitoring coordinator&lt;/b&gt;&lt;br&gt;[new] src/lib/server/monitoring/&lt;br&gt;Discover + advance files; coalesce updates;&lt;br&gt;refresh changed sessions/families;&lt;br&gt;publish coherent snapshots" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;spacing=12;align=center;verticalAlign=middle;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=2;" parent="1" vertex="1">
+          <mxGeometry x="850" y="170" width="300" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="store" value="&lt;b&gt;Shared monitoring store&lt;/b&gt;&lt;br&gt;[new] src/lib/server/monitoring/&lt;br&gt;Per source + full file/session identity;&lt;br&gt;cached parsed/estimated results;&lt;br&gt;generation, freshness and failure state" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;spacing=12;align=center;verticalAlign=middle;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=2;" parent="1" vertex="1">
+          <mxGeometry x="1250" y="170" width="300" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="config" value="&lt;b&gt;ApplicationConfig&lt;/b&gt;&lt;br&gt;[existing] configured Claude source&lt;br&gt;Existing foreground application;&lt;br&gt;WSL is an execution environment" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;spacing=12;align=center;verticalAlign=middle;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
+          <mxGeometry x="1650" y="170" width="350" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="projection" value="&lt;b&gt;Monitoring projection&lt;/b&gt;&lt;br&gt;[new] src/lib/server/monitoring/&lt;br&gt;All-session summaries + requested details;&lt;br&gt;plain serializable view models;&lt;br&gt;exact amounts and structured uncertainty" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;spacing=12;align=center;verticalAlign=middle;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=2;" parent="1" vertex="1">
+          <mxGeometry x="450" y="410" width="300" height="145" as="geometry" />
+        </mxCell>
+        <mxCell id="filedao" value="&lt;b&gt;SessionFileDAO / SessionFile&lt;/b&gt;&lt;br&gt;[existing] src/lib/server/sessions/&lt;br&gt;Discovery, file metadata,&lt;br&gt;parent/subagent membership" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;spacing=12;align=center;verticalAlign=middle;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
+          <mxGeometry x="450" y="660" width="300" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="reader" value="&lt;b&gt;Incremental file-access owner&lt;/b&gt;&lt;br&gt;[new/extend] src/lib/server/sessions/&lt;br&gt;Byte offsets; retained source records;&lt;br&gt;incomplete trailing bytes; consistency checks;&lt;br&gt;local invalidation and full rebuild" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;spacing=12;align=center;verticalAlign=middle;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;" parent="1" vertex="1">
+          <mxGeometry x="850" y="660" width="300" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="parser" value="&lt;b&gt;ConversationParser +&lt;br&gt;ConversationSubagentLinker&lt;/b&gt;&lt;br&gt;[existing] src/lib/server/conversations/&lt;br&gt;Interpret retained-record snapshots;&lt;br&gt;source/relationship diagnostics" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;spacing=12;align=center;verticalAlign=middle;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
+          <mxGeometry x="1250" y="660" width="300" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="estimator" value="&lt;b&gt;UsageEstimationService&lt;/b&gt;&lt;br&gt;[existing] src/lib/server/usage/&lt;br&gt;Coordinate canonical accounting,&lt;br&gt;dated pricing and exact calculations" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;spacing=12;align=center;verticalAlign=middle;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
+          <mxGeometry x="1650" y="660" width="350" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="listing" value="&lt;b&gt;SessionListService&lt;/b&gt;&lt;br&gt;[existing neighbor] metadata-list owner&lt;br&gt;Not the monitoring cache or&lt;br&gt;accounting owner" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;spacing=12;align=center;verticalAlign=middle;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
+          <mxGeometry x="450" y="930" width="300" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="conversation-service" value="&lt;b&gt;ConversationService +&lt;br&gt;SessionJsonlReader&lt;/b&gt;&lt;br&gt;[existing neighbors] fresh-read workflow&lt;br&gt;Retain existing callers/behavior;&lt;br&gt;monitoring reuses interpretation owners" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;spacing=12;align=center;verticalAlign=middle;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
+          <mxGeometry x="850" y="930" width="300" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="accounting" value="&lt;b&gt;TokenUsageAccounting&lt;/b&gt;&lt;br&gt;[existing] attribution and deduplication;&lt;br&gt;categories; shared allocations;&lt;br&gt;parent/subagent aggregation" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;spacing=12;align=center;verticalAlign=middle;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
+          <mxGeometry x="1250" y="930" width="300" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="catalog" value="&lt;b&gt;DatedUsageRateCatalog&lt;/b&gt;&lt;br&gt;[existing] model/category/time selection;&lt;br&gt;local dated rate table;&lt;br&gt;selected-rate assumptions or unknowns" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;spacing=12;align=center;verticalAlign=middle;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
+          <mxGeometry x="1650" y="930" width="350" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="math" value="&lt;b&gt;UsageCalculationEngine / ExactDecimal&lt;/b&gt;&lt;br&gt;[existing] exact arithmetic;&lt;br&gt;known subtotals + unresolved expressions" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;spacing=12;align=center;verticalAlign=middle;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
+          <mxGeometry x="1250" y="1150" width="300" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="files" value="&lt;b&gt;Local Claude JSONL files&lt;/b&gt;&lt;br&gt;External data source • parent sessions + subagents&lt;br&gt;Appends normally; replacement/truncation possible" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;spacing=12;align=center;verticalAlign=middle;shape=cylinder3;boundedLbl=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+          <mxGeometry x="450" y="1350" width="700" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="legend" value="&lt;b&gt;Legend&lt;/b&gt;&lt;br&gt;Blue: planned component • Green: extend/add within existing boundary&lt;br&gt;Purple: existing neighbor • Solid arrow: call/use • Dashed arrow: contextual dependency&lt;br&gt;Arrows show dependency direction; results return to the caller." style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;spacing=12;align=center;verticalAlign=middle;fillColor=#fff2cc;strokeColor=#d6b656;align=left;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="1250" y="1350" width="750" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="constraints" value="&lt;b&gt;Snapshot and recovery constraints&lt;/b&gt;&lt;br&gt;No server polling when idle; no database/history store.&lt;br&gt;Only completed records are interpreted. Failed updates retain stale prior values.&lt;br&gt;Rebuilds replace old contributions. Raw transcripts stay server-side." style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;spacing=12;align=center;verticalAlign=middle;fillColor=#fff2cc;strokeColor=#d6b656;align=left;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="45" y="930" width="300" height="270" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" value="refresh / expansion actions" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=11;labelBackgroundColor=#ffffff;strokeColor=#556677;" parent="1" source="page" target="refresh" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" value="request summaries + expanded IDs" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=11;labelBackgroundColor=#ffffff;strokeColor=#556677;exitX=1;exitY=0.4;entryX=0;entryY=0.7;" parent="1" source="refresh" target="transport" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" value="obtain current snapshot" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=11;labelBackgroundColor=#ffffff;strokeColor=#556677;" parent="1" source="transport" target="coordinator" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" value="read / publish" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=11;labelBackgroundColor=#ffffff;strokeColor=#556677;" parent="1" source="coordinator" target="store" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" value="resolve configured source" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=11;labelBackgroundColor=#ffffff;strokeColor=#556677;dashed=1;exitX=0.5;exitY=0;entryX=0.5;entryY=0;" parent="1" source="transport" target="config" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" value="project snapshot" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=11;labelBackgroundColor=#ffffff;strokeColor=#556677;" parent="1" source="transport" target="projection" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" value="render returned view models" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=11;labelBackgroundColor=#ffffff;strokeColor=#556677;exitX=0;exitY=0.8;entryX=0;entryY=0.2;" parent="1" source="page" target="presentation" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" value="discover all sessions" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=11;labelBackgroundColor=#ffffff;strokeColor=#556677;entryX=0.5;entryY=0;" parent="1" source="coordinator" target="filedao" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="910" y="590" />
+              <mxPoint x="600" y="590" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e9" value="advance tracked files" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=11;labelBackgroundColor=#ffffff;strokeColor=#556677;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" parent="1" source="coordinator" target="reader" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" value="changed retained-record snapshots" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=11;labelBackgroundColor=#ffffff;strokeColor=#556677;entryX=0.5;entryY=0;" parent="1" source="coordinator" target="parser" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1040" y="485" />
+              <mxPoint x="1400" y="485" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e11" value="changed conversations / families" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=11;labelBackgroundColor=#ffffff;strokeColor=#556677;entryX=0.5;entryY=0;" parent="1" source="coordinator" target="estimator" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1110" y="420" />
+              <mxPoint x="1825" y="420" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e12" value="stat / discover" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=11;labelBackgroundColor=#ffffff;strokeColor=#556677;exitX=0;exitY=0.8;entryX=0;entryY=0.2;" parent="1" source="filedao" target="files" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="390" y="772" />
+              <mxPoint x="390" y="1372" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e13" value="read appended bytes / rebuild" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=11;labelBackgroundColor=#ffffff;strokeColor=#556677;" parent="1" source="reader" target="files" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="800" y="740" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e14" value="metadata discovery" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=11;labelBackgroundColor=#ffffff;strokeColor=#556677;dashed=1;" parent="1" source="listing" target="filedao" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e15" value="existing interpretation workflow" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=11;labelBackgroundColor=#ffffff;strokeColor=#556677;dashed=1;exitX=1;exitY=0.2;entryX=0;entryY=0.8;" parent="1" source="conversation-service" target="parser" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e16" value="canonical token usage" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=11;labelBackgroundColor=#ffffff;strokeColor=#556677;exitX=0;exitY=0.8;entryX=1;entryY=0.2;" parent="1" source="estimator" target="accounting" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e17" value="dated rate resolution" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=11;labelBackgroundColor=#ffffff;strokeColor=#556677;" parent="1" source="estimator" target="catalog" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e18" value="evaluate cost expressions" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=11;labelBackgroundColor=#ffffff;strokeColor=#556677;exitX=1;exitY=0.8;entryX=1;entryY=0.5;" parent="1" source="estimator" target="math" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e19" value="compose token expressions" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=11;labelBackgroundColor=#ffffff;strokeColor=#556677;" parent="1" source="accounting" target="math" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
