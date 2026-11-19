@@ -26,11 +26,11 @@
 
 ## Tasks
 
-- [ ] 1 - Establish monitoring contracts and responsibility boundaries
-  - [ ] 1.1 - Review actual discovery, record/source, parser/linker, accounting/estimation, and page-data contracts. Identify the narrow reuse/extension points for retained-record snapshots without changing their responsibility ownership.
-  - [ ] 1.2 - Establish named server concepts for tracked files, coherent monitoring snapshots, session state, source/update generations, last successful refresh, and local/global failures. Key state by configured source and full session/file identity, including project and subagent identity.
-  - [ ] 1.3 - Establish distinct serializable summary and requested-detail contracts for the browser, including all token categories, parent-only/combined totals, unresolved calculation operands, source-update times, stale state, and failure indicators. Keep runtime domain models separate from transport/view models.
-  - [ ] 1.4 - Define the update and projection interfaces connecting the file-access boundary, monitoring coordinator, existing interpretation/calculation owners, and thin transport. Keep filesystem behavior out of parsers/calculations and browser state out of the server store.
+- [x] 1 - Establish monitoring contracts and responsibility boundaries
+  - [x] 1.1 - Review actual discovery, record/source, parser/linker, accounting/estimation, and page-data contracts. Identify the narrow reuse/extension points for retained-record snapshots without changing their responsibility ownership.
+  - [x] 1.2 - Establish named server concepts for tracked files, coherent monitoring snapshots, session state, source/update generations, last successful refresh, and local/global failures. Key state by configured source and full session/file identity, including project and subagent identity.
+  - [x] 1.3 - Establish distinct serializable summary and requested-detail contracts for the browser, including all token categories, parent-only/combined totals, unresolved calculation operands, source-update times, stale state, and failure indicators. Keep runtime domain models separate from transport/view models.
+  - [x] 1.4 - Define the update and projection interfaces connecting the file-access boundary, monitoring coordinator, existing interpretation/calculation owners, and thin transport. Keep filesystem behavior out of parsers/calculations and browser state out of the server store.
 
 - [ ] 2 - Implement incremental file reading and local recovery
   - [ ] 2.1 - Add a named incremental reader/state owner within the file-access boundary. Retain completed source-located records, consumed byte offsets, file identity/metadata, and incomplete trailing bytes. Preserve correct line numbering, CRLF handling, and UTF-8 boundaries across appends.
@@ -78,3 +78,12 @@
   - [ ] 8.4 - Cover serializable projections and transport selection: summaries for all sessions, details only for requested valid identities, coherent snapshot versions, precise known/unknown values and assumptions, failure/freshness metadata, and exclusion of raw transcripts/domain instances.
   - [ ] 8.5 - Cover rendered category/totals/uncertainty/stale/error states and controlled-clock refresh behavior, including hidden tabs, manual/automatic overlap, expansion changes during requests, response freshness, cleanup, retries, and five-second/one-minute highlight boundaries.
   - [ ] 8.6 - Add integration coverage from incremental source updates through monitoring responses using temporary parent/subagent sessions. Run authored tests and the full existing npm run check/npm test commands; document browser/network and WSL limitations without claiming unsupported coverage.
+
+## Task 1 Implementation Notes
+
+- Reviewed actual file discovery/read, source/record, parser/linker, ConversationLoadResult, usage estimation, and initial page-load contracts. Recorded reuse points and placement in 05-live-session-monitoring-contracts.md; existing fresh-read callers and parser/accounting independence remain intact.
+- Added IncrementalSessionRead.ts under the existing file-access boundary, defining revision/checkpoint metadata, tracked byte/record snapshots, change/failure outcomes, and the advance interface. No reading, caching, append checking, or rebuild behavior was implemented.
+- Added MonitoringSessionIdentity, MonitoringSnapshot, and MonitoringProjection under the server-only monitoring module. Source plus complete conversation/file identity keys remain separate from browser selection keys. Contracts represent per-session and family membership, generations, last successful refresh, source-update time, and local/global stale/failure state; the coordinator/store implementations remain task 3.
+- Added browser-safe MonitoringViewModel contracts for all-session metadata/aggregate summaries, requested activity details, compact exact amounts, and requested calculation graphs with source/price context and rate assumptions. Browser contracts do not import server modules, and transport/projection behavior remains task 4. Null unavailable results remain distinct from partial known amounts and unknown operands.
+- No routes, UI, parser/accounting behavior, architecture records, dependencies, tests, or fixtures were changed. No persistent process was started. Task 2 has not begun; dedicated test authoring remains task 8.
+- Validation on 2026-11-18 in native Windows PowerShell with Node.js v24.19.0: npm run check passed with zero errors/warnings; npm test passed all 68 existing tests. git diff --check passed. These are type/regression checks, not dedicated monitoring contract coverage. WSL execution remains unverified. Task 1 changes remain uncommitted.
