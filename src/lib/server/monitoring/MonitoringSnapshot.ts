@@ -38,6 +38,9 @@ export interface MonitoringSessionState
     readonly parentKey: string | null;
     readonly orphan: boolean;
     readonly tracked: TrackedSessionFile | null;
+    /** File generation behind the cached parse, which may lag after an interpretation failure. */
+    readonly parsedFileGeneration: number | null;
+    /** Per-file parse before parent links are applied in a family estimate. */
     readonly conversation: ConversationFileResult | null;
     readonly generation: number;
     readonly sourceUpdatedAt: Date | null;
