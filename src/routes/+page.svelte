@@ -2,6 +2,7 @@
     import { invalidateAll } from '$app/navigation';
     import { SessionDiscoveryStatus } from '../lib/sessions/SessionDiscoveryViewModel';
     import SessionFileMetadata from '../lib/sessions/SessionFileMetadata.svelte';
+    import MonitoringWorkspace from '../lib/monitoring/MonitoringWorkspace.svelte';
     import type { PageProps } from './$types';
 
     let { data }: PageProps = $props();
@@ -41,9 +42,14 @@
 
 <header>
     <h1>Monitoring</h1>
-    <p>Follow active sessions and their latest activity.</p>
+    <p>Session activity, token usage, and estimated costs.</p>
 </header>
 
+{#if data.monitoring}
+    {#key data.monitoring.sourceKey}
+        <MonitoringWorkspace initial={data.monitoring} />
+    {/key}
+{:else}
 <div class="monitoring-workspace">
     <section aria-labelledby="sessions-title">
         <div class="sessions-heading">
@@ -123,6 +129,7 @@
         <p>This area will show the activity of a selected session.</p>
     </section>
 </div>
+{/if}
 
 <style>
     header

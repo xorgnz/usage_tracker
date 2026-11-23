@@ -52,12 +52,12 @@
   - [x] 4.3 - Integrate initial page loading and native SvelteKit refresh transport with the same shared coordinator. Parse requested expansion identities explicitly, resolve them within the configured discovered source, and avoid accepting arbitrary client filesystem paths.
   - [x] 4.4 - Return summaries and requested details from one coherent snapshot, with explicit global/per-session failure and freshness information. Distinguish unavailable values from zero and stale prior values from current results; keep business rules in domain/service owners.
 
-- [ ] 5 - Build the monitoring summaries and expanded activity UI
-  - [ ] 5.1 - Extend the current page with all-session identity, latest-update metadata, token category summaries, and estimated costs. Preserve useful project grouping, empty/failed/partial states, and distinct subagent presentation.
-  - [ ] 5.2 - Implement expansion state and on-demand activity summary delivery. Expanded sessions display their requested details; collapsed sessions continue to display metadata and aggregate usage. Keep page coordination separate from focused session/usage presentation components where needed.
-  - [ ] 5.3 - Show parent-only and combined totals with clear labels, separate subagent amounts, estimate assumptions, and expandable unresolved operands. Keep known quantities usable when another operand is missing and do not label uncertainty as zero usage/cost.
-  - [ ] 5.4 - Display source-update timestamps and highlight updated sessions bright yellow for five seconds, fading to the normal background by one minute. Base recency on source updates rather than refresh completion; avoid implying an executing process and keep text legible throughout the fade.
-  - [ ] 5.5 - Add visible global/per-session failure flags and stale indicators with last successful refresh times. Retain prior displayed values on failures, show partial-result uncertainty, and provide meaningful loading status for requested details.
+- [x] 5 - Build the monitoring summaries and expanded activity UI
+  - [x] 5.1 - Extend the current page with all-session identity, latest-update metadata, token category summaries, and estimated costs. Preserve useful project grouping, empty/failed/partial states, and distinct subagent presentation.
+  - [x] 5.2 - Implement expansion state and on-demand activity summary delivery. Expanded sessions display their requested details; collapsed sessions continue to display metadata and aggregate usage. Keep page coordination separate from focused session/usage presentation components where needed.
+  - [x] 5.3 - Show parent-only and combined totals with clear labels, separate subagent amounts, estimate assumptions, and expandable unresolved operands. Keep known quantities usable when another operand is missing and do not label uncertainty as zero usage/cost.
+  - [x] 5.4 - Display source-update timestamps and highlight updated sessions bright yellow for five seconds, fading to the normal background by one minute. Base recency on source updates rather than refresh completion; avoid implying an executing process and keep text legible throughout the fade.
+  - [x] 5.5 - Add visible global/per-session failure flags and stale indicators with last successful refresh times. Retain prior displayed values on failures, show partial-result uncertainty, and provide meaningful loading status for requested details.
 
 - [ ] 6 - Coordinate automatic and manual browser refresh
   - [ ] 6.1 - Introduce a focused browser refresh owner integrated with component lifecycle. Request approximately every five seconds while visible, pause in hidden tabs, and clean up scheduling on navigation/unmount.
@@ -108,3 +108,10 @@
 - The initial page load and POST /monitoring/refresh share MonitoringCoordinator.forSource. The refresh body contains expandedSessionKeys and explanationIds, each limited to 2,000 entries. Selections are validated as opaque IDs and resolved within the current projection. Unknown IDs are ignored. The refresh response is marked no-store.
 - The existing page metadata list is projected from the same snapshot during the transition to the monitoring UI. The initial response selects no expanded details or explanations.
 - On Windows Node.js 24.22.1, npm.cmd run check passed with zero diagnostics, and npm.cmd test passed all 68 existing tests. Direct handler smoke checks passed with temporary sessions for initial and refresh coherence, selection filtering, exact and partial amounts, stale recovery, and exclusion of raw transcript payloads. WSL and browser network execution remain unverified.
+
+## Task 5 Implementation Notes
+
+- The monitoring page now shows sessions grouped by project, separate subagent cards, latest activity and source-update times, four token categories, and labeled parent-only and combined estimated costs.
+- Opening activity or an explanation requests the selected details through the refresh endpoint. Expanded usage explanations show exact known values, unresolved operands, and available rate assumptions. Partial amounts show uncertainty explicitly.
+- Source updates drive the card highlight. It stays bright yellow for five seconds and fades to the normal background at one minute. Request failures keep prior results visible and show stale flags, errors, and last successful refresh times.
+- Windows validation passed with zero type diagnostics and all 68 existing tests. Disposable server-render checks covered grouped session and subagent data, known and unknown amounts, calculation explanations, retained values after failure, and transcript exclusion. Browser interaction and animation timing remain unverified.
