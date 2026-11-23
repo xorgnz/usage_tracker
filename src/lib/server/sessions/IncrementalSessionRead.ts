@@ -10,6 +10,8 @@ export interface SessionFileRevision
     readonly sizeBytes: number;
     readonly modifiedAt: Date;
     readonly changedAt: Date;
+    readonly modifiedAtNs: bigint;
+    readonly changedAtNs: bigint;
 }
 
 /** Retained comparison bytes; the reader owns checkpoint selection and validation policy. */
