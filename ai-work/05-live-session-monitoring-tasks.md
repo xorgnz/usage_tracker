@@ -45,13 +45,13 @@
   - [x] 7.3 - Verify monitoring coordination and payloads
   - [x] 7.4 - Verify browser refresh, failure states, and highlight timing
 
-- [ ] 8 - Author and run monitoring tests
-  - [ ] 8.1 - Add reusable monitoring fixtures
-  - [ ] 8.2 - Test incremental reader behavior
-  - [ ] 8.3 - Test monitoring coordination and family totals
-  - [ ] 8.4 - Test monitoring projections and transport
-  - [ ] 8.5 - Test rendered states and browser refresh
-  - [ ] 8.6 - Test the source-to-response flow and run validation
+- [x] 8 - Author and run monitoring tests
+  - [x] 8.1 - Add reusable monitoring fixtures
+  - [x] 8.2 - Test incremental reader behavior
+  - [x] 8.3 - Test monitoring coordination and family totals
+  - [x] 8.4 - Test monitoring projections and transport
+  - [x] 8.5 - Test rendered states and browser refresh
+  - [x] 8.6 - Test the source-to-response flow and run validation
 
 ## Task Details
 
@@ -673,3 +673,9 @@
 - Simulated browser lifecycle and server-render assertions passed for visibility changes, refresh coalescing, rapid close/reopen, retained values and recovery after failures, request cleanup, and unresolved calculation rendering. Browser network behavior and visual highlight timing require the manual check below. WSL enumeration was denied in this execution environment.
 - Manual WSL/browser check for 7.4: run npm run dev from the configured WSL workspace and open the printed local URL. In the browser Network panel, verify refresh requests roughly every five seconds while visible, none while hidden, and an immediate request when returning. Use Refresh and open, close, and reopen a session's activity and a cost explanation. Check that requests do not overlap, closed panels no longer have their IDs requested, and reopened panels show current details. Simulate a failed request with the browser offline control. Values should remain visible as stale and recover once back online. Observe a normally updated session or a disposable fixture update: the highlight should start bright yellow, remain bright for its first five seconds, then fade by one minute from the source update. Report any mismatch, or confirm these checks passed.
 - User-confirmed WSL/browser results: visible-tab refresh ran about every five seconds, paused while hidden, and resumed immediately on return. Manual refresh and reopening activity and cost explanations showed current details, with one request at a time. Going offline showed a yellow warning and preserved stale values. A successful online refresh cleared the warning. A new session appeared yellow, updated with activity, and faded to its normal background within one minute. The user deferred feedback on the readability of the cost explanation.
+
+## Task 8 Validation Notes
+
+- Added 12 monitoring tests with in-memory snapshots and disposable session files. Coverage includes incremental byte tracking and recovery, family aggregation and deduplication, serializable requested details and calculation graphs, direct page and refresh handlers, rendered failure and uncertainty states, controlled refresh timing, and compiled highlight styles.
+- On Windows with Node.js v24.22.1, npm.cmd run check passed with zero errors and warnings, and npm.cmd test passed all 80 tests.
+- The automated suite invokes route handlers in-process and checks rendered markup, compiled styles, and a simulated visibility and timer lifecycle. Live browser networking and animation remain covered by the user’s manual WSL run in task 7.4.
