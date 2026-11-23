@@ -1,16 +1,18 @@
 <script lang="ts">
+    import { onMount } from 'svelte';
     import { SessionDiscoveryStatus } from '../sessions/SessionDiscoveryViewModel';
     import type { MonitoringResponseViewModel, MonitoringSessionSummaryViewModel } from './MonitoringViewModel';
+    import { MonitoringRefreshController, type MonitoringRefreshState } from './MonitoringRefreshController';
     import MonitoringSessionCard from './MonitoringSessionCard.svelte';
 
     let { initial }: { initial: MonitoringResponseViewModel } = $props();
-    let refreshed = $state.raw<MonitoringResponseViewModel | null>(null);
-    let snapshot = $derived(refreshed && (refreshed.sourceKey !== initial.sourceKey || refreshed.generation >= initial.generation) ? refreshed : initial);
-    let expanded = $state<string[]>([]);
-    let explanations = $state<string[]>([]);
-    let loading = $state(false);
-    let failure = $state(false);
-    let selectionChanged = false;
+    let controller = $state.raw<MonitoringRefreshController | null>(null);
+    let refreshState = $state.raw<MonitoringRefreshState | null>(null);
+    let snapshot = $derived(refreshState?.snapshot ?? initial);
+    let expanded = $derived(refreshState?.expanded ?? []);
+    let explanations = $derived(refreshState?.explanations ?? []);
+    let loading = $derived(refreshState?.loading ?? false);
+    let failure = $derived(refreshState?.failure ?? false);
     let projects = $derived(groupProjects(snapshot.sessions));
     let orphans = $derived(snapshot.sessions.filter(session => session.orphan).sort(byRecentUpdate));
     let children = $derived(groupChildren(snapshot.sessions));
@@ -38,79 +40,30 @@
         return groups;
     }
 
-    function toggle(id: string, ids: string[]): string[]
+    onMount(() =>
     {
-        return ids.includes(id) ? ids.filter(candidate => candidate !== id) : [...ids, id];
-    }
-
-    function toggleActivity(key: string): void
-    {
-        expanded = toggle(key, expanded);
-        requestSelection(expanded.includes(key) && !details.has(key));
-    }
-
-    function toggleExplanation(id: string): void
-    {
-        explanations = toggle(id, explanations);
-        requestSelection(explanations.includes(id) && !calculations.has(id));
-    }
-
-    function requestSelection(needsData: boolean): void
-    {
-        if (loading)
+        const owner = new MonitoringRefreshController(document, initial, async (selection, signal) =>
         {
-            selectionChanged = true;
-        }
-        else if (needsData)
-        {
-            void refresh();
-        }
-    }
-
-    async function refresh(): Promise<void>
-    {
-        if (loading)
-        {
-            return;
-        }
-
-        loading = true;
-        try
-        {
-            do
+            const response = await fetch('/monitoring/refresh', {
+                method: 'POST',
+                headers: { 'content-type': 'application/json' },
+                body: JSON.stringify(selection),
+                signal
+            });
+            if (!response.ok)
             {
-                selectionChanged = false;
-                const response = await fetch('/monitoring/refresh', {
-                    method: 'POST',
-                    headers: { 'content-type': 'application/json' },
-                    body: JSON.stringify({ expandedSessionKeys: expanded, explanationIds: explanations })
-                });
-                if (!response.ok)
-                {
-                    throw new Error('Monitoring refresh failed.');
-                }
-
-                const next = await response.json() as MonitoringResponseViewModel;
-                if (next.sourceKey !== snapshot.sourceKey)
-                {
-                    expanded = [];
-                    explanations = [];
-                    selectionChanged = false;
-                }
-                refreshed = next;
-                failure = false;
+                throw new Error('Monitoring refresh failed.');
             }
-            while (selectionChanged);
-        }
-        catch
-        {
-            failure = true;
-        }
-        finally
-        {
-            loading = false;
-        }
-    }
+            return await response.json() as MonitoringResponseViewModel;
+        }, next => { refreshState = next; });
+        controller = owner;
+        return () => owner.dispose();
+    });
+
+    $effect(() =>
+    {
+        controller?.acceptInitial(initial);
+    });
 </script>
 
 {#snippet card(session: MonitoringSessionSummaryViewModel)}
@@ -122,15 +75,15 @@
         openExplanations={explanations}
         {loading}
         transportFailed={failure}
-        onToggleActivity={() => toggleActivity(session.key)}
-        onToggleExplanation={toggleExplanation}
+        onToggleActivity={() => controller?.toggleActivity(session.key)}
+        onToggleExplanation={id => controller?.toggleExplanation(id)}
     />
 {/snippet}
 
 <section aria-labelledby="monitoring-sessions">
     <div class="toolbar">
         <h2 id="monitoring-sessions">Sessions <span>{snapshot.sessions.length}</span></h2>
-        <button type="button" onclick={refresh} disabled={loading}>Refresh</button>
+        <button type="button" onclick={() => controller?.refresh()} disabled={loading}>Refresh</button>
     </div>
     <div class="status" role="status">{loading ? 'Refreshing session data…' : ''}</div>
 

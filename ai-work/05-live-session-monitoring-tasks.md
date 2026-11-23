@@ -59,11 +59,11 @@
   - [x] 5.4 - Display source-update timestamps and highlight updated sessions bright yellow for five seconds, fading to the normal background by one minute. Base recency on source updates rather than refresh completion; avoid implying an executing process and keep text legible throughout the fade.
   - [x] 5.5 - Add visible global/per-session failure flags and stale indicators with last successful refresh times. Retain prior displayed values on failures, show partial-result uncertainty, and provide meaningful loading status for requested details.
 
-- [ ] 6 - Coordinate automatic and manual browser refresh
-  - [ ] 6.1 - Introduce a focused browser refresh owner integrated with component lifecycle. Request approximately every five seconds while visible, pause in hidden tabs, and clean up scheduling on navigation/unmount.
-  - [ ] 6.2 - Share the refresh path between automatic updates, manual Refresh, and expansion changes. Prevent overlapping browser requests and handle expansion changes during an in-flight update without showing obsolete details or overwriting newer state.
-  - [ ] 6.3 - Request summaries for all sessions and details only for currently expanded sessions. Preserve expansion state through refreshes, reconcile removed sessions, and refresh requested details when opened again.
-  - [ ] 6.4 - Retain successful values and visible failure/stale state after transport errors. Retry on subsequent refreshes, clear resolved failure flags after success, and keep recency fading correct between network refreshes.
+- [x] 6 - Coordinate automatic and manual browser refresh
+  - [x] 6.1 - Introduce a focused browser refresh owner integrated with component lifecycle. Request approximately every five seconds while visible, pause in hidden tabs, and clean up scheduling on navigation/unmount.
+  - [x] 6.2 - Share the refresh path between automatic updates, manual Refresh, and expansion changes. Prevent overlapping browser requests and handle expansion changes during an in-flight update without showing obsolete details or overwriting newer state.
+  - [x] 6.3 - Request summaries for all sessions and details only for currently expanded sessions. Preserve expansion state through refreshes, reconcile removed sessions, and refresh requested details when opened again.
+  - [x] 6.4 - Retain successful values and visible failure/stale state after transport errors. Retry on subsequent refreshes, clear resolved failure flags after success, and keep recency fading correct between network refreshes.
 
 - [ ] 7 - Validate implementation with existing tooling and focused checks
   - [ ] 7.1 - Run existing npm run check and npm test through the applicable validation workflow. Record runtime/environment and coverage limitations; do not install dependencies or start persistent processes without an explicit request.
@@ -115,3 +115,10 @@
 - Opening activity or an explanation requests the selected details through the refresh endpoint. Expanded usage explanations show exact known values, unresolved operands, and available rate assumptions. Partial amounts show uncertainty explicitly.
 - Source updates drive the card highlight. It stays bright yellow for five seconds and fades to the normal background at one minute. Request failures keep prior results visible and show stale flags, errors, and last successful refresh times.
 - Windows validation passed with zero type diagnostics and all 68 existing tests. Disposable server-render checks covered grouped session and subagent data, known and unknown amounts, calculation explanations, retained values after failure, and transcript exclusion. Browser interaction and animation timing remain unverified.
+
+## Task 6 Implementation Notes
+
+- MonitoringRefreshController shares one request path for automatic refresh, manual refresh, and newly opened panels. It schedules the next automatic request after roughly five seconds, clears the timer while hidden, and refreshes immediately on return. Component cleanup removes the listener, clears the timer, and aborts any pending request.
+- Requests include the current activity and explanation selections. Selection versions prevent old responses from filling a panel closed and reopened during the request. Successful snapshots preserve still-valid selections, clear removed entries, and discard older same-source generations. Closing a panel clears its returned detail so reopening fetches fresh data.
+- Transport failures preserve the latest published values and show the existing stale and failure indicators. The scheduler continues retrying, and a successful response clears the transport failure. Recency animation stays keyed to the file's source-update timestamp.
+- Windows type checking and all 68 existing tests passed. Disposable controller checks with a simulated visibility event, clock, and deferred requests covered scheduling, visibility pause and resume, coalescing, close/reopen races, stale-value retention, retry, removal, and cleanup. Interactive browser timing and WSL remain unverified.

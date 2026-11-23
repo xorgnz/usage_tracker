@@ -17,12 +17,13 @@
 
     let { session, expanded, detail, calculations, openExplanations, loading, transportFailed, onToggleActivity, onToggleExplanation }: Props = $props();
     let stale = $derived(transportFailed || session.freshness.stale);
-    let updateAge = $derived(session.sourceUpdatedAt === null ? 60000 : Math.max(0, Date.now() - Date.parse(session.sourceUpdatedAt)));
+    let sourceUpdatedAt = $derived(session.sourceUpdatedAt);
+    let updateAge = $derived(sourceUpdatedAt === null ? 60000 : Math.max(0, Date.now() - Date.parse(sourceUpdatedAt)));
     let ownLabel = $derived(session.agentId === null ? 'Parent only' : 'Subagent usage');
 </script>
 
 <article>
-    {#key session.sourceUpdatedAt}
+    {#key sourceUpdatedAt}
         {#if updateAge < 60000}
             <div aria-hidden="true" class="recent" style:animation-delay={`-${updateAge}ms`}></div>
         {/if}
