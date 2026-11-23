@@ -1,16 +1,19 @@
 import { ApplicationConfig } from '../lib/server/config/ApplicationConfig';
-import { SessionListService } from '../lib/server/sessions/SessionListService';
+import { MonitoringCoordinator } from '../lib/server/monitoring/MonitoringCoordinator';
+import { MonitoringSnapshotProjection } from '../lib/server/monitoring/MonitoringSnapshotProjection';
 import type { PageServerLoad } from './$types';
 
-/** Re-evaluates configuration and session files on every initial load or invalidation. */
+/** Initial page data and refresh requests use the same coordinator for the configured source. */
 export const load: PageServerLoad = async () =>
 {
     const configuration = await ApplicationConfig.load(process.cwd());
-    const sessionList = await new SessionListService(configuration.claudeDirectory).load();
+    const snapshot = await MonitoringCoordinator.forSource(configuration.claudeDirectory).refresh();
+    const projection = new MonitoringSnapshotProjection(snapshot);
 
     return {
         claudeDirectoryAvailable: configuration.claudeDirectoryAvailable,
         claudeDirectoryIssue: configuration.claudeDirectoryIssue,
-        sessionList
+        sessionList: projection.sessionList(),
+        monitoring: projection.project({ expandedSessionKeys: [], explanationIds: [] })
     };
 };
