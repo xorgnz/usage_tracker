@@ -57,3 +57,19 @@
 - Decision: The file-access boundary owns byte offsets, file identity/metadata, incomplete trailing bytes, and append-consistency checks. Detected truncation, replacement, rewriting, or inconsistent reads invalidate the affected file state and trigger a full rebuild. Size growth alone is insufficient evidence of a valid append.
 - Context: JSONL normally grows by appending, but files can change while being read or be replaced.
 - Consequences: Only completed records enter interpreted snapshots. Updates publish consistently after processing succeeds; read failures preserve the last successful snapshot with explicit stale status. Rebuilds replace previous contributions rather than adding a second copy. Recovery remains local to affected sessions and aggregates.
+
+### Conversation inspection and source access
+
+- Status: Approved
+- Source: `06-conversation-inspection`
+- Decision: A server-side inspection projection uses the shared monitoring snapshot to build the selected conversation’s timeline, linked subagent views, usage, costs, and diagnostics. Thin SvelteKit routes serve the initial view and refreshes. Source JSON is delivered only on explicit request, using a reference tied to the displayed file revision and resolved within the selected conversation family.
+- Context: Inspection needs full conversation detail and periodic refresh. The monitoring list needs compact summaries. Both views use the same server-side interpretation and accounting.
+- Consequences: The monitoring list and its refresh responses continue to omit raw transcripts. If a source reference no longer matches the displayed revision, inspection reports it as unavailable and lets the user refresh. The inspection tab owns conversation selection, expanded panels, reading position, and visibility-aware refresh. Monitoring and inspection share cost explanation presentation. Calculation and pricing remain server-side.
+
+### Session search and inspection navigation
+
+- Status: Approved
+- Source: `07-session-search`
+- Decision: A server-side search service obtains one refreshed snapshot from the shared monitoring coordinator per submitted search. It matches text and filters against individual activities using interpreted content and retained source records. A thin SvelteKit route returns session-grouped hits, short snippets, and links using Conversation Inspection’s activity references.
+- Context: Search must cover all sessions in the configured source, including unopened sessions and subagents. Users need to reach the exact activity that matched.
+- Consequences: The coordinator retains ownership of file updates and snapshot publication. The browser keeps each submitted result set fixed while monitoring refreshes independently. If a source change makes a hit’s location unavailable, Conversation Inspection reports that instead of opening unrelated activity. Search adds no persistent index.
